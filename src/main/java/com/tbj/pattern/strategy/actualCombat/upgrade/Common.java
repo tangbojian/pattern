@@ -1,5 +1,6 @@
 package com.tbj.pattern.strategy.actualCombat.upgrade;
 
+@TotalValidRegion(max=1000)
 public class Common implements CalPrice{
 
 	@Override

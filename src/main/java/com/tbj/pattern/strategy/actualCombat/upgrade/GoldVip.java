@@ -1,5 +1,6 @@
 package com.tbj.pattern.strategy.actualCombat.upgrade;
 
+@TotalValidRegion(min=3000)
 public class GoldVip implements CalPrice{
 
 	@Override

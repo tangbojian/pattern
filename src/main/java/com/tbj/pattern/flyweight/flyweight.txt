@@ -1,0 +1,417 @@
+享元模式：
+ 魔都。
+
+                    自从越狱风波过去以后，小左的生活便又回到了之前的节奏，依旧是每日徘徊在魔都某天桥，继续着自己的算命之旅。
+
+                    说起这次越狱风波，着实让小左心情沉闷了很久。原因无他，就是因为在施展一次记忆恢复的过程中，发生了一点意外，结果导致一名看守所人员的记忆产生了混乱，如果用通俗的话来讲，就是变成了人们口中常说的精神病。
+
+                    小左当时选择的是一个生物专业硕士毕业的应届生的记忆，而另外一位被注入记忆的看守所成员，已经成功了迈入了生物界的神奇领域，虽说谈不上一步登天，但相信现在生活的应该要比之前在看守所好上数倍。当然，这番生活条件的改观也并非白来的，这位新生的生物界奇才，所失去的，正是之前数十年的记忆，这之中也当然包括了对家人朋友的记忆。
+
+                    至于故事当中的主角韩雨露，此时应该已经被其能力通天的父亲给保护了起来。自从韩雨露被小左私自释放，除了刚开始的新闻漫天之外，短短的十数天，此事就像是没有发生过一样烟消云散。尽管这是小左意料之中的，否则小左也不会义无反顾的释放韩雨露，不过之前小左可远远没有想到消息的封锁会如此之快。
+
+                    值得一说的是李刚和李双江，自从被误认为私自释放了韩雨露，二人的生活就直接陷入了暗无天日的境地，虽说这样的结果对二人有些不公平，不过由于二人对韩雨露语言上的亵渎，导致小左并未对此有所愧疚。
+
+                    
+
+                   魔都某网吧。
+
+                   “尼玛，辅助买个鸟啊。”小左坐在烟雾缭绕的网吧里，骂骂咧咧的大声喊道。细一看，就发现小左在叫骂的同时，正拉着自己红血的SF马不停蹄的往泉水跑。
+
+                   ............
+
+                   “我考，不带这么玩的吧。”
+
+                   只见小左的电脑屏幕之上，三道红光一闪即逝，小左的SF瞬间倒地，在释放一记魂之挽歌之后，便不甘的回到了泉水。
+
+                   “SF，你TM会不会啊，别出门了行不？”
+
+                   “9494，你这么送下去，我们还怎么玩啊。” 
+
+                   “猪一样的队友啊，真TM倒霉。”
+
+                   ..........
+
+                   看着屏幕上陆续浮现出的队友们的谩骂，小左终于忍受不了，无奈的看了看自己40分钟依旧是假腿的SF，匆匆的退出了游戏。
+
+
+                   魔都某出租屋。
+
+                   “好不容易想起去体验几把DOTA，结果全跪了。尼玛，太不爽了。不行，我得虐虐电脑，找找快感。”
+
+                   由于被连续虐了几把，小左回到家里依旧感觉十分不爽，于是便再次打开DOTA，准备虐几把电脑找找感觉。
+
+                   机器始终不是人类，在连续几把无限超神之后，小左终于感觉心里舒畅了许多。无聊之际，开始漫无目的的在网上冲浪。不过由于小左转生之前毕竟是一名程序猿，所以看着看着，不知不觉之间便打开了享元模式的定义。
+
+   
+定义：享元模式（英语：flyweight Pattern）是一种软件设计模式，它适用共享物件，用来尽可能减少内存使用量以及内存资讯给尽可能多的相似物件；它适用于当大量物件只是重复因而导致无法令人接受的使用大量内存。通常物件中
+的部分状态是可以共享。常见的做法是把它们放在外部数据结构，当需要使用时再将它们传递给享元。
+
+看定义的意思，这个模式主要是为了减少不必要的重复对象，减少内存消耗，而要做到这个的话，那么就需要把一个对象可共享的状态给封装起来，而不可能共享的状态则从外部获取。
+
+小左的指头不停的敲打着桌面，继续说道，如果所有DOTA的玩家都在一台服务器上操作，那么DOTA里的英雄应该就可以使用享元模式，每个英雄应该都是唯一实例，而不应该是一旦有人选了一个英雄，就要实例化一个。
+
+如果是传统意义上的方式，应该是这种写法。假设有一个抽象的英雄基类。
+
+/**
+ * @author bjtang
+ * @date 2017年8月7日
+ * @desc 抽象英雄基类
+ */
+public abstract class AbstractHero {
+
+	protected final String name;// 英雄名称
+	protected final String[] skills = new String[4];
+	protected long hp;
+	private long mp;
+	
+	public AbstractHero(){
+		super();
+		this.name = getName();
+		initSkills();
+		checkSkills();
+	}
+	
+	private void checkSkills(){
+		for(String skill : skills){
+			if(StringUtils.isEmpty(skill)){
+				throw new NullPointerException("技能不能为空");
+			}
+		}
+	}
+	
+	public void releaseSkills(int index){
+		if(index < 0){
+			index = 0;
+		}else if(index > 3){
+			index = 3;
+		}
+		System.out.println(name + "释放" + skills[index]);
+	}
+
+	public abstract String getName();
+
+	public abstract void initSkills();
+
+	public long getHp() {
+		return hp;
+	}
+
+	public void setHp(long hp) {
+		this.hp = hp;
+	}
+
+	public long getMp() {
+		return mp;
+	}
+
+	public void setMp(long mp) {
+		this.mp = mp;
+	}
+
+}
+
+英雄可以释放技能，物理攻击等等，而且英雄是有血量和魔法量的，下面就写两个具体的英雄看一下。
+
+/**
+ * @author bjtang
+ * @date   2017年8月7日  
+ * @desc   魔法巫师实现类
+ */
+public class Lion extends AbstractHero {
+
+	@Override
+	public String getName() {
+		return "魔法巫师";
+	}
+
+	@Override
+	public void initSkills() {
+		skills[0] = "穿刺";
+		skills[1] = "妖术";
+		skills[2] = "法力汲取";
+		skills[3] = "死亡一指";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年8月7日  
+ * @desc   影魔实现类
+ */
+public class SF extends AbstractHero {
+
+	@Override
+	public String getName() {
+		return "影魔";
+	}
+
+	@Override
+	public void initSkills() {
+		skills[0] = "毁灭阴影";
+        skills[1] = "支配死灵";
+        skills[2] = "魔王降临";
+        skills[3] = "魂之挽歌";
+	}
+
+}
+
+一个是魔法巫师，一个是影魔，很显然，假设现在有四个sole局，都是SF对LION，那么现在这种方式则需要实例化四个LION和四个SF，就像下面这样.
+
+/**
+ * @author bjtang
+ * @date 2017年8月7日
+ * @desc 测试
+ */
+public class Client {
+
+	public static void main(String[] args) {
+
+		// 假设有四个solo局，则需要创建四个lion和四个sf
+		Lion lion1 = new Lion();
+		SF sf1 = new SF();
+
+		Lion lion2 = new Lion();
+		SF sf2 = new SF();
+
+		Lion lion3 = new Lion();
+		SF sf3 = new SF();
+
+		Lion lion4 = new Lion();
+		SF sf4 = new SF();
+
+		/* 以下为释放技能，物理攻击等的打架过程 */
+
+	}
+
+}
+
+这显然是非常浪费资源啊，四个lion和四个sf其实有很多一样的地方，这应该就可以使用享元模式了吧。
+
+不过享元模式强调的是 内部状态和外部状态，内部状态则是可以共享的状态，外部状态则是随外部环境而变化的状态，是无法共享的状态。那么下面要做的就是将外部状态分离开来，只保留内部状态，这样的话对象的实例就可以共享了。
+
+对于上面DOTA英雄的简单例子来说，血量和魔法应该是外部状态，因为四个solo局中，每个lion和每个sf的血量和魔法是不一定相等的，所以这两个状态是无法共享的，但是技能和名称就不一样了，他们属于内部状态，是可以共享的，因为
+不管哪个sole局里的lion和sf，他们的英雄名称和技能都是一样的。
+
+这下好办了，首先应该把基类里面的血量和魔法量删除掉。
+
+/**
+ * @author bjtang
+ * @date   2017年8月7日  
+ * @desc   抽象英雄类
+ */
+public abstract class AbstractHero {
+
+	protected final String name;
+	protected final String[] skills = new String[4];
+	
+	public AbstractHero(){
+		super();
+		this.name = getName();
+		checkSkills();
+		initSkills();
+	}
+	
+	private void checkSkills(){
+		for(String skill : skills){
+			if(StringUtils.isEmpty(skill)){
+				throw new NullPointerException("技能不能为空");
+			}
+		}
+	}
+	
+	public void releaseSkills(int index){
+		if(index < 0){
+			index = 0;
+		}else if(index > 3){
+			index = 3;
+		}
+		System.out.println(name + "释放" + skills[index]);
+	}
+	
+	public abstract String getName();
+	
+	public abstract void initSkills();
+	
+}
+
+其余两个子类应该是不用变的，下面我还需要再写一个类去组合英雄的内部状态和外部状态
+
+/**
+ * @author bjtang
+ * @date 2017年8月7日
+ * @desc 用于组合英雄内部状态和外部状态的类，假设称之为角色
+ */
+public class Role {
+
+	private AbstractHero hero;
+	
+	public Role(AbstractHero hero){
+		super();
+		this.hero = hero;
+	}
+	
+	/**释放技能**/
+	public void release(int index){
+		hero.releaseSkills(index);
+	}
+
+	private long hp;
+	private long mp;
+
+	public long getHp() {
+		return hp;
+	}
+
+	public void setHp(long hp) {
+		this.hp = hp;
+	}
+
+	public long getMp() {
+		return mp;
+	}
+
+	public void setMp(long mp) {
+		this.mp = mp;
+	}
+
+}
+
+我们用角色这个类去组合英雄的内部和外部状态，下面还需要一个享元模式最重要的类，就是提供共享功能的类.
+
+/**
+ * @author bjtang
+ * @date 2017年8月7日
+ * @desc 提供共享功能,单例
+ */
+public class HeroManager {
+
+	private static HeroManager heroManager = new HeroManager();
+
+	private Map<String, AbstractHero> heroMap;
+
+	private HeroManager() {
+		heroMap = new HashMap<>();
+	}
+
+	public static HeroManager getInstance() {
+		return heroManager;
+	}
+
+	// 该方法提供共享功能
+	public AbstractHero getHero(String name) {
+		AbstractHero hero = heroMap.get(name);
+		if (hero == null) {
+			if (name.equals("恶魔巫师")) {
+				hero = new Lion();
+			} else if (name.equals("影魔")) {
+				hero = new SF();
+			}
+			heroMap.put(name, hero);
+		}
+		return hero;
+	}
+}
+
+现在如果再来四个sole局，那么情况就和刚才不太一样了。
+
+/**
+ * @author bjtang
+ * @date 2017年8月7日
+ * @desc 测试类
+ */
+public class Client {
+
+	// 假设有四个solo局，则使用了享元模式的情况下，其实恶魔巫师和影魔的实例各自只有一个
+	HeroManager heroManager = HeroManager.getInstance();
+	Role role1 = new Role(heroManager.getHero("恶魔巫师"));
+	Role role2 = new Role(heroManager.getHero("影魔"));
+
+	Role role3 = new Role(heroManager.getHero("恶魔巫师"));
+	Role role4 = new Role(heroManager.getHero("影魔"));
+
+	Role role5 = new Role(heroManager.getHero("恶魔巫师"));
+	Role role6 = new Role(heroManager.getHero("影魔"));
+
+	Role role7 = new Role(heroManager.getHero("恶魔巫师"));
+	Role role8 = new Role(heroManager.getHero("影魔"));
+
+	/* 以下为释放技能，物理攻击等的打架过程 */
+
+}
+
+四个sole局当中有八个角色，选了八个英雄，四个lion和四个sf，但是很明显，使用享元模式后，这里面的八个英雄其实只有一个lion实例和一个sf实例，这样就大大减少了英雄的实例个数，试想一下同时有1000个sole局，
+按照之前的方式，那会有1000个lion的实例和1000个sf的实例，而现在使用享元模式的话，依旧是只有一个lion实例和一个sf实例。
+
+这么说起来的话，享元模式节省的内存实在不可估量，只不过DOTA这么大型得游戏，它的设计不会这么简单，不过用来理解享元模式还是个不错的例子。
+
+ 理解了享元模式的好处，小左像打了鸡血似的，一拍桌子大叫道：“NND，再去网吧搞两把。”
+
+话音刚落，小左便一溜烟跑出了出租屋，直奔网吧而去。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            

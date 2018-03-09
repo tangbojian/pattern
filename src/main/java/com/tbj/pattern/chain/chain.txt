@@ -1,0 +1,565 @@
+  凌晨两点，魔都某出租屋。
+
+               "God like."
+
+               .......
+
+               "Holy shit."
+
+               ......
+
+               “哈哈。老子终于超神一次啦。”伴随着低音炮中一声怒吼，小左在自己十来平米的出租房里兴奋的尖叫起来。近了一看，原来小左操作的J8脸30分钟已经一身神装，如今正在疯狂的大杀四方。
+
+               “今晚杀的真爽，干脆通宵得了。”
+
+               依依不舍的退出了超神的一局，小左摸了摸自己像漏气了一样的肚子，喃喃的说道：“肚子有点饿了啊，这大半夜的可怎么办呢。”
+
+               
+
+               “喂，你好，请问现在还送餐吗？”
+
+               “不好意思，先生，您的住址离我们太远，请您问一下其它分店。”
+
+               “问你妹啊，老子问了好几家了。”心里虽然不爽，小左嘴上还是很客气的说道：“嗯，好的，谢谢啊。”
+
+               .......
+
+               “喂，你好，请问你们往XXXX小区送餐吗？”
+
+               “嗯，是的。先生。”
+
+               小左心中一乐，“嗯，那好，我要一个XXX，一个XXX，一个XXX。”
+
+               “不好意思，先生，现在太晚了，我们的送餐时间已经过了。”
+
+               “我....去....你....妹啊。不送不早说。”心中暗骂了一句，小左直接挂了电话。
+
+               .......
+
+               “喂，你好，请问你们往XXXX小区送餐吗？”
+
+               “嗯，是的。先生。”
+
+               “嗯，那你们送餐时间没过吧。”有了上次的经验，小左没有先报菜单，而是先确认对方是否过了送餐时间。
+
+               “没有，先生。”
+
+               “嗯，那好，我要一个XXX，一个XXX，一个XXX。”
+
+               “不好意思，先生，这些都已经卖完了，您看您能换别的吗？”
+
+               “我....换你大爷.....”
+
+
+                半个小时过去了...
+
+                “哎呀妈呀，累死我了。终于找到一家送餐的了。这麦当劳号称24小时外卖是坑爹呢吧。”经过将近半个小时的折腾，小左终于找到一家比较合适的麦当劳分店，现在就只等着外卖送过来了。
+
+                “外卖估计半个小时就到了，这一会也开不了一局，干脆干点别的，等吃完饭再开始。”说着，小左便开始在网上找寻设计模式的内容，这一闲下来就研究设计模式的劲头，当真是不辱转生前程序猿的头衔。
+
+                
+
+                “啊哈，职责连模式。看起来可以解决麦当劳订餐的问题啊，好好研究一下，给麦当劳老总提个建议，说不定赏我个几亿美金。哇哈哈。”还没开始研究，小左已经开始YY起来。
+
+定义：为了避免请求的发送者和接受者之间的耦合关系，使多个接受对象都有机会处理请求。讲这些对象连成一条链，并沿用这条链传递该请求，直到有一个对象处理它为止。
+
+看到这个定义，就是将一堆可以处理请求的对象连成一条链，然后一个一个试着处理请求。这好像是可以解决麦当劳订餐的问题的，我先来看看我刚才苦逼的订餐过程是什么样子的。
+
+首先应该有一个麦当劳的分店的类，它的主要功能是可以订餐。
+
+/**
+ * @author bjtang
+ * @date   2017年8月9日  
+ * @desc   麦当劳分店类
+ */
+public class McSubbranch {
+
+	/**配送范围**/
+	private final static int MIN_DISTANCE = 500;
+	
+	/**一共记录有几家分店铺**/
+	private static int count;
+	
+	/**当前店的店铺号**/
+	private final int number;
+	
+	/**当前店的横坐标**/
+	private int x;
+	
+	/**当前店的纵坐标**/
+	private int y;
+	
+	/**当前的菜单**/
+	private Map<String, Integer> menu;
+	
+	public McSubbranch(int x, int y, Map<String, Integer> menu){
+		super();
+		this.x = x;
+		this.y = y;
+		this.menu = menu;
+		number = ++count;
+	}
+	
+	/**
+	 * 用于判断是否满足送餐要求: 1:距离在配送范围内 2：所点东西的数量 小于或等于当前店里东西的数量
+	 * @param x
+	 * @param y
+	 * @param order
+	 * @return
+	 */
+	public boolean order(int x, int y, Map<String, Integer> order){
+		//如果距离小于500米并且订单中的食物不缺货,则订单成功,否则失败.
+		if(CommonUtils.getDistance(x, y, this.x, this.y) < MIN_DISTANCE && !CommonUtils.outOfStock(menu, order)){
+			for(String name : order.keySet()){
+				menu.put(name, menu.get(name) - order.get(name));
+			}
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * 返回不可修改的菜单集合
+	 * @return
+	 */
+	public Map<String, Integer> getMenu(){
+		return Collections.unmodifiableMap(menu);
+	}
+
+	@Override
+	public String toString() {
+		return "麦当劳分店铺" + number + "个";
+	}
+	
+}
+
+
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   简单的工具类 
+ */
+public class CommonUtils {
+
+	private CommonUtils(){};
+	
+	/***
+	 * 计算两点之间的距离
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
+	public static double getDistance(int x1, int y1, int x2, int y2){
+		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	}
+	
+	/**
+	 * 是否缺货: true 缺货， false 不缺货
+	 * @param menu
+	 * @param order
+	 * @return
+	 */
+	public static boolean outOfStock(Map<String, Integer> menu, Map<String, Integer> order){
+		if(order == null || order.size() == 0){
+			return false;
+		}
+		if(menu == null || menu.size() == 0){
+			return true;
+		}
+		for(String name : order.keySet()){
+			if(menu.get(name) - order.get(name) < 0){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+}
+
+
+下面就是我苦逼的订餐过程了，假如有5个分店的话，我订餐的过程就是一家一家挨着去顶，直到成功为止.
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   模拟订餐过程
+ */
+public class Client {
+	
+	public static void main(String[] args) {
+		//假设初始化菜单都是以下这些东西
+		Map<String, Integer> menu = new HashMap<String, Integer>();
+		menu.put("汉堡", 5);
+		menu.put("薯条", 5);
+		menu.put("可乐", 5);
+		menu.put("雪碧", 5);
+		//假设有5个分店
+		McSubbranch mcSubbranch1 = new McSubbranch(0, 0, new HashMap<String, Integer>(menu));
+		McSubbranch mcSubbranch2 = new McSubbranch(100, 120, new HashMap<String, Integer>(menu));
+		McSubbranch mcSubbranch3 = new McSubbranch(-100, -120, new HashMap<String, Integer>(menu));
+		McSubbranch mcSubbranch4 = new McSubbranch(1000, 20, new HashMap<String, Integer>(menu));
+		McSubbranch mcSubbranch5 = new McSubbranch(-500, 0, new HashMap<String, Integer>(menu));
+		
+		List<McSubbranch> mcSubbranchs = Arrays.asList(mcSubbranch1, mcSubbranch2, mcSubbranch3, mcSubbranch4, mcSubbranch5);
+		
+		//小左开始订餐,假设小左的坐标是900,0
+		Map<String, Integer> order = new HashMap<String, Integer>();
+		order.put("汉堡", 2);
+		order.put("可乐", 1);
+		order.put("薯条", 1);
+		
+		print(mcSubbranchs);
+		
+		System.out.println("---------------------");
+		//小左开始一家一家挨着尝试订餐.知道成功
+		for(McSubbranch mcSubbranch : mcSubbranchs){
+			if(mcSubbranch.order(900, 20, order)){
+				System.out.println("订餐成功,接受订单的分店是：" + mcSubbranch);
+				break;
+			}
+		}
+		
+		System.out.println("----------------------");
+		print(mcSubbranchs);
+		
+	}
+	
+	public static void print(List<McSubbranch> mcSubbranchs){
+		for(McSubbranch mcSubbranch : mcSubbranchs){
+			System.out.println("[" + mcSubbranch + "]的菜单:" + mcSubbranch.getMenu());
+			
+		}
+	}
+	
+}
+
+[麦当劳分店铺1个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺2个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺3个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺4个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺5个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+---------------------
+订餐成功,接受订单的分店是：麦当劳分店铺4个
+----------------------
+[麦当劳分店铺1个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺2个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺3个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+[麦当劳分店铺4个]的菜单:{薯条=4, 可乐=4, 汉堡=3, 雪碧=5}
+[麦当劳分店铺5个]的菜单:{薯条=5, 可乐=5, 汉堡=5, 雪碧=5}
+
+这样确实比较悲催，我得一家一家打电话问，太麻烦了，麦当劳这么大一个企业，订餐的服务竟然这么烂，看我用设计模式给你优化一下吧，哈哈
+
+先来看看责任链模式的类图，这样比较好设计。
+
+/pattern/src/main/java/com/tbj/pattern/chain/20130805183348203.jpg
+
+类图还是比较简单，有一个通用的接口，然后就是若干具体的处理者，按照现在麦当劳的情况来说，接口里handleRequest方法其实就是order(订餐)方法了，而setSuccessor方法，则是用来设置责任链的下一个处理者。
+
+对于麦当劳的问题来说，每一个分店就是具体的处理者，主要的改动应该是抽象出来一个接口以及责任链的连接过程，而刚才发订单的时候是拆分成方法参数传递给订餐方法的，现在最好把订单做成一个数据类。
+
+/**
+ * @author bjtang
+ * @date 2017年8月10日
+ * @desc 订单类.
+ */
+public class Order {
+
+	private int x;
+	private int y;
+	private Map<String, Integer> order;
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public Map<String, Integer> getOrder() {
+		return order;
+	}
+
+	public void setOrder(Map<String, Integer> order) {
+		this.order = order;
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   分店接口.相当于handler
+ */
+public interface Subbranch {
+
+	/**设置责任链下一下请求处理者**/
+	void setSuccessor(Subbranch subbranch);
+	
+	/**用于处理请求**/
+	boolean handleOrder(Order order);
+	
+}
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   具体的麦当劳实现类
+ */
+public class McSubbranch implements Subbranch {
+	
+	private final static Integer MIN_DISTANCE = 500;//假设是500米以内送餐
+	
+	private static Integer count;
+	
+	private final Integer number;
+	
+	private int x;
+	
+	private int y;
+	
+	private Map<String, Integer> menu;
+	
+	private Subbranch nextSubbranch;
+	
+	public McSubbranch(int x, int y, Map<String, Integer> menu){
+		this.x = x;
+		this.y = y;
+		this.menu = menu;
+		this.number = ++count;
+	}
+	
+	@Override
+	public void setSuccessor(Subbranch subbranch) {
+		this.nextSubbranch = subbranch;
+	}
+
+	@Override
+	public boolean handleOrder(Order order) {
+		if(CommonUtils.getDistance(order.getX(), order.getY(), this.x, this.y) < MIN_DISTANCE && !CommonUtils.outOfStock(menu, order.getOrder())){
+			for (String name : order.getOrder().keySet()) {
+                menu.put(name, menu.get(name) - order.getOrder().get(name));
+            }
+            System.out.println("订餐成功，接受订单的分店是：" + this);
+			return true;
+		}
+		if(nextSubbranch == null){
+			System.out.println("对不起,暂时不能为你提供服务");
+			return false;
+		}
+		return nextSubbranch.handleOrder(order);
+	}
+	
+	public Map<String, Integer> getMenu() {
+        return Collections.unmodifiableMap(menu);
+    }
+    
+    public Subbranch getNextSubbranch() {
+        return nextSubbranch;
+    }
+    
+    public String toString() {
+        return "麦当劳分店第" + number + "个";
+    }
+}
+
+handleOrder 方法中的逻辑就是责任链的精髓了，她会试图处理请求，如果处理不了，则交给链中的下一个分店，刚才用的CommonUtils应该不用不变了，下面就看下有了责任链末世之后，我的订餐方发吧。
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   测试
+ */
+public class Client {
+
+	public static void main(String[] args) {
+		
+		//假设初始菜单都是以下这些东西
+        Map<String, Integer> menu = new HashMap<String, Integer>();
+        menu.put("汉堡", 5);
+        menu.put("薯条", 5);
+        menu.put("可乐", 5);
+        menu.put("雪碧", 5);
+        //假设有5个分店
+        Subbranch mcSubbranch1 = new McSubbranch(0, 0, new HashMap<String, Integer>(menu));
+        Subbranch mcSubbranch2 = new McSubbranch(100, 120, new HashMap<String, Integer>(menu));
+        Subbranch mcSubbranch3 = new McSubbranch(-100, -120, new HashMap<String, Integer>(menu));
+        Subbranch mcSubbranch4 = new McSubbranch(1000, 20, new HashMap<String, Integer>(menu));
+        Subbranch mcSubbranch5 = new McSubbranch(-500, 0, new HashMap<String, Integer>(menu));
+        
+        //一下是设置责任链
+        mcSubbranch4.setSuccessor(mcSubbranch5);
+        mcSubbranch3.setSuccessor(mcSubbranch4);
+        mcSubbranch2.setSuccessor(mcSubbranch3);
+        mcSubbranch1.setSuccessor(mcSubbranch2);
+        
+        //小左开始订餐,假设小左的坐标是900,20
+        Map<String, Integer> order = new HashMap<String, Integer>();
+        order.put("汉堡", 2);
+        order.put("可乐", 1);
+        order.put("薯条", 1);
+        
+        print(mcSubbranch1);
+        System.out.println("------------------------------------------");
+        //小左开始订餐，直接找mcSubbranch1的这一家分店订餐即可
+        mcSubbranch1.handleOrder(new Order(900, 20, order));
+        
+        System.out.println("------------------------------------------");
+        print(mcSubbranch1);
+		
+	}
+	
+	 public static void print(Subbranch subbranch){
+        if (subbranch == null ) {
+            return;
+        }
+        do {
+            if (subbranch instanceof McSubbranch) {
+                System.out.println("[" + subbranch + "]的菜单:" + ((McSubbranch) subbranch).getMenu());
+            }
+        } while ((subbranch = ((McSubbranch) subbranch).getNextSubbranch()) != null);
+    }
+}
+
+
+输出结果和刚才是一样的，不过这下我订餐就好办了多了，直接找第一家分店订餐就行，至于最后谁给我送餐，我就不用管了。
+
+责任链模式果然还是很强大呀，哈哈，不过现在还有一点缺点，那就是订餐的时候我还记着应该找哪家分店，如果麦当劳有一个专门的订餐管理部门就好了，这样的话，就更容易找到该找谁订餐了，下面我就添加一个订餐管理部门，完善一下吧。
+
+/**
+ * @author bjtang
+ * @date   2017年8月10日  
+ * @desc   订餐管理部门,他并不是责任链模式中的角色，但是在责任链模式中，通常情况下会有一个专门负责维护维护责任链.
+ * 在本例中，这个类称为订单管理部门更合适
+ */
+public class OrderManager {
+
+	private static OrderManager orderManager = new OrderManager();
+	
+	private Subbranch head;
+	
+	private Subbranch last;
+	
+	private OrderManager(){};
+	
+	public static OrderManager getInstance(){
+		return orderManager;
+	}
+	
+	public void registerSubbranch(Subbranch subbranch){
+		if(head == null){
+			head = last = subbranch;
+		}else{
+			last.setSuccessor(subbranch);
+			last = subbranch;
+		}
+	}
+	
+	public boolean handleOrder(Order order){
+		return head.handleOrder(order);
+	}
+	
+}
+
+其余的都不变,这下我们就使用订餐管理部门,(可以理解为麦当劳总店或者总服务台都可以)订餐试一下.
+
+/**
+ * @author bjtang
+ * @date 2017年8月10日
+ * @desc 测试
+ */
+public class Client2 {
+
+	public static void main(String[] args) {
+		// 假设初始菜单都是以下这些东西
+		Map<String, Integer> menu = new HashMap<String, Integer>();
+		menu.put("汉堡", 5);
+		menu.put("薯条", 5);
+		menu.put("可乐", 5);
+		menu.put("雪碧", 5);
+		// 假设有5个分店
+		Subbranch mcSubbranch1 = new McSubbranch(0, 0,
+				new HashMap<String, Integer>(menu));
+		Subbranch mcSubbranch2 = new McSubbranch(100, 120,
+				new HashMap<String, Integer>(menu));
+		Subbranch mcSubbranch3 = new McSubbranch(-100, -120,
+				new HashMap<String, Integer>(menu));
+		Subbranch mcSubbranch4 = new McSubbranch(1000, 20,
+				new HashMap<String, Integer>(menu));
+		Subbranch mcSubbranch5 = new McSubbranch(-500, 0,
+				new HashMap<String, Integer>(menu));
+
+		// 注册5个分店
+		OrderManager.getInstance().registerSubbranch(mcSubbranch1)
+								  .registerSubbranch(mcSubbranch2)
+								  .registerSubbranch(mcSubbranch3)
+								  .registerSubbranch(mcSubbranch4)
+								  .registerSubbranch(mcSubbranch5);
+
+		// 小左开始订餐，假设小左的坐标是900,20
+		Map<String, Integer> order = new HashMap<String, Integer>();
+		order.put("汉堡", 2);
+		order.put("可乐", 1);
+		order.put("薯条", 1);
+
+		print(mcSubbranch1);
+		System.out.println("------------------------------------------");
+
+		// 小左开始订餐，直接找订餐管理部门订餐
+		OrderManager.getInstance().handleOrder(new Order(900, 20, order));
+
+		System.out.println("------------------------------------------");
+		print(mcSubbranch1);
+	}
+
+	public static void print(Subbranch subbranch) {
+		if (subbranch == null) {
+			return;
+		}
+		do {
+			if (subbranch instanceof McSubbranch) {
+				System.out.println("[" + subbranch + "]的菜单:"
+						+ ((McSubbranch) subbranch).getMenu());
+			}
+		} while ((subbranch = ((McSubbranch) subbranch).getNextSubbranch()) != null);
+	}
+
+}
+
+现在有了分店，直接向管理部门注册一下就好了，到时候有订单就会自动由管理部门一次分发下去了，这一次输出结果和第一次也是一样的，这下订餐就更方便了，我只管急着麦当劳订餐部门的电话就行了，至于他有几个分店，我完全不用关心。
+
+下面我就总结一下责任链模式的好处吧，
+
+用了责任链模式之后，主要的好处有下面两点
+
+1、不在需要记忆所有分店的号码和联系方式，然后一个一个去订餐。
+2、不需要知道麦当劳的内部管理结构，正因为这样，麦当劳再开多少分店，订餐的客户都不需要关心，而按照以前的方式，麦当劳每多开一个分店，客户都有可能需要多记忆一个分店的联系方式。
+
+用专业的语言来说，就是下面两点：
+
+1、客户端与具体的处理者解耦，客户端只认识一个Hanlder接口，降低了客户端(即请求发送者)与处理者的耦合度。、
+2、客户端和处理者都不关心责任链的具体结构，而是交给责任链的创建者(在上述例子当中则是交给了OrderManager)，也正因为如此，当在责任链中添加处理的时候，这对客户端和处理者来说，都是透明的。
+二者不知道也不必知道责任链的变化。
+
+责任链模式的好处应该就是这些了，下面我来看看刚才的类图吧。
+
+/pattern/src/main/java/com/tbj/pattern/chain/updater/20130805223658250.jpg
+
+和标准的责任链模式类图几乎一模一样，少了一个具体的处理者，不过这并不影响类图所要传达的意义，不过这个类图也有点太简单了，不过也正是因为简单，从类图中一眼就能看出来，责任链模式的精髓就在于那一条神奇的聚合线。
+
+“叮咚...”
+
+“咦？我订的餐到啦，哈哈。”
+

@@ -1,0 +1,485 @@
+本章介绍迭代器模式，不再采用故事嵌入的讲解方式，主要是因为迭代器模式本身有更多的东西需要介绍，如果嵌入到小说中，会不太方便去阐述这些内容。
+另外，由于LZ的大部分设计模式文章主要针对的人群是对设计模式已经有一定了解，希望更加深入理解的程序猿们。所以LZ希望各位在看本篇文章时，可以打开一个初步介绍迭代器模式的文章，对比观看。
+下面进入正题，我们先来看看百度百科或者说GOF对迭代器模式的定义。
+
+定义：提供一种方法顺序访问一个聚合对象中各个元素，而又不需要暴露该对象的内部表示。
+从定义可以看出，迭代器模式是为了在不暴露改变对象内部表示的情况下，提供一种顺序访问聚合对象中元素的方法。这种思想在JAVA集合框架中已经体现的淋漓尽致，而且LZ相信每一个解春JAVA的同学都难免要去接触。
+
+所以LZ这次先不给出迭代器的类图和标准实现，我们先来看看迭代器模式解决了JAVA集合框架中的哪些问题。
+
+为了更加清晰，LZ斗胆写几个简单的集合类(向JDK类库的缔造者致敬)，我们从这几个简单的集合类出发，去仔细体现下定义的意思，下面是LZ分别写的缩小版的ArrayList、LindedList和HashSet。
+
+/***
+ * 
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   简单实现的ArrayList 	 
+ * @param <E>
+ */
+public class ArrayList<E> {
+
+	/**当数组满的时候，每次增加的长度**/
+	private static final int INCRMENT = 10;
+	
+	/**记录大小**/
+	private int size;
+	
+	/**初始化**/
+	private E[] array = (E[]) new Object[10];
+	
+	public void add(E e){
+		if(size < array.length){
+			array[size++] = e;
+		}else{
+			E[] copy = (E[]) new Object[array.length + INCRMENT];
+			System.arraycopy(array, 0, copy, 0, size);
+			copy[size++] = e;
+			array = copy;
+		}
+	}
+	
+	public Object[] toArray(){
+		Object[] copy = new Object[size];
+		System.arraycopy(array, 0, copy, 0, size);
+		return copy;
+	}
+	
+	public int size(){
+		return size;
+	}
+	
+}
+
+
+/**
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   简单实现的linkedList 	
+ * @param <E>
+ */
+public class LinkedList<E> {
+
+	/**头结点**/
+	private Node<E> head = new Node<E>(null, null, null);
+	
+	/**上一个节点**/
+	private Node<E> last = null;
+	
+	private int size;
+	
+	public LinkedList(){
+		head.next = head.prev = head;
+	}
+	
+	public void add(E e){
+		Node<E> newNode = new Node<E>(null, e, null);
+		if(head == head.next && head == head.prev){
+			//表示现在只有一个头结点
+			head.next = newNode;
+			newNode.prev = head;
+		}else{
+			//表示链表除了头结点,已经有别的节点了
+			newNode.prev = last;
+			last.next = newNode;
+		}
+		//最后一个节点的尾节点指向头结点
+		newNode.next = head;
+		last = newNode;
+		size++;
+	}
+	
+	public int size(){
+		return size;
+	}
+	
+	public Object[] toArray(){
+		Object[] result = new Object[size];
+		int i = 0;
+		for(Node<E> e = head.next; e != head; e = e.next){
+			result[i++] = e.e;
+		}
+		return result;
+	}
+	
+	private static class Node<E>{
+		Node<E> prev;
+		E e;
+		Node<E> next;
+		Node(Node<E> prev, E e, Node<E> next){
+			this.prev = prev;
+			this.e = e;
+			this.next = next;
+		}
+	}
+}
+
+/***
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   依赖Map实现HashSet 	 
+ * @param <E>
+ */
+public class HashSet<E> {
+
+	private static final Object NULL = new Object();
+	private Map<E, Object> map = new HashMap<>();
+	
+	public void add(E e){
+		map.put(e, NULL);
+	}
+	
+	public int size(){
+		return map.size();
+	}
+	
+	public Object[] toArray(){
+		return map.keySet().toArray();
+	}
+	
+}
+
+//下面我们看看三个类的遍历方式
+
+/**
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   遍历自己写的三个类
+ */
+public class Client {
+
+	public static void main(String[] args) {
+		
+		ArrayList<Integer> arrayList = new ArrayList<Integer>();
+		for(int i = 1; i <= 11; i++){
+			arrayList.add(i);
+		}
+		System.out.println("arrayList size: " + arrayList.size());
+		Object[] array = arrayList.toArray();
+		for(int i = 0; i < array.length; i++){
+			System.out.println(array[i]);
+		}
+		
+		LinkedList<Integer> linkedList = new LinkedList<Integer>();
+		for(int i = 1; i <= 11; i++){
+			linkedList.add(i);
+		}
+		System.out.println("linkedList size: " + linkedList.size());
+		Object[] array1 = linkedList.toArray();
+		for(int i = 0; i < array1.length; i++){
+			System.out.println(array1[i]);
+		}
+		
+		HashSet<Integer> hashSet = new HashSet<Integer>();
+		for(int i = 1; i <= 11; i++){
+			hashSet.add(i);
+		}
+		System.out.println("hashSet size: " + hashSet.size());
+		Object[] array2 = hashSet.toArray();
+		for(int i = 0; i < array1.length; i++){
+			System.out.println(array2[i]);
+		}
+	}
+	
+}
+
+ 结果在这里LZ就不贴了，只是简单的输出三次1到11。
+ 
+各位思考一下，我们这里的遍历是如何做到的，很明显，我们是通过一个通用的方法，toArray做到的，当然， 为了迎合面向接口的思想，你可以添加一个接口规定toArray的行为，让三个类去实现它。
+
+但是在这里有一个很大的弊端，不知道各位注意到没有，那就是不论我们的集合类是如何实现的（比如链表，数组，散列），在使用数组遍历集合类的时候，我们其实遍历了两次。
+
+在这三个类中，由于System的arrayCopy和set的toArray方法都是黑箱子，所以最明显的便是LinkedList的实现，它是先遍历一遍链表，做出来一个数组，然后当客户端获取这个数组的时候，则需要再来一次遍历，去遍历
+每一个元素。
+
+为何会出现这种情况呢？
+很简单，因为我们的集合类本身就不是一个数组，所以自然要多一步从集合类到数组的过度，哪怕是本身由数组实现的ArrayList，也避免不了多这一步，各位可以试一下在ArrayList中直接返回array属性，结果会出现一堆null值。
+而且这样做的话，对于array的改变会直接影响到ArrayList本身。这并不是我们所希望看到的，所以我们返回的只是一个拷贝。
+
+当然 ，为了解决这个问题，我们并不是没有办法，比如给LinkedList和ArrayList加入get方法，而这个方法有一个参数index，这是我们常用的遍历方法，如此一来，便解决了二次遍历的问题。
+
+但是问题又来了，那就是我们无法给HashSet提供一个根据索引获取元素的方法，由于散列的特性，set中的元素是无序的，或者说顺序是不能被保证的。那么这个get方法，在HashSet中便无法提供，因为这里没有通俗意义上的
+索引的概念。
+
+可以看到，上面LZ粗浅的分析，得出一个结论，三个集合类，如果统一提供数组给客户端遍历，那么在遍历的过程中会出现重复遍历的现象，而如果消除这种重复遍历，则由于内部数据结构的不同，三个集合类无法做到像提供数组一样，给
+客户端提供统一的遍历方式。
+
+为了解决上面的问题，迭代器模式就出现了，我们先来看看迭代器模式在百度百科中的类图，稍后各位可以自己体会下，迭代器模式是否解决了上面问题，以及是否提供了额外的好处。
+
+/pattern/src/main/java/com/tbj/pattern/iterator/20130720153644390.png
+
+看着上面的类图，我们可以分析出来，上面我们所写的ArrayList等三个类都属于ConcreteAggregate的位置，如果我们刚才设计一个数组接口让三个类去实现的话，其实已经和迭代器模式十分相似了。它们的类图会是下面
+这样的。
+
+/pattern/src/main/java/com/tbj/pattern/iterator/20130720154837890.jpg
+
+在上述类图中，我们从面向对象的角度思考，将Object[]当做一个对象对待，我们对比下两个类图，它们其实是非常相似的，其中最大的区别就在于，第二个类图当中，没有抽象数组接口这个概念，而在迭代器模式的类图中，室友迭代器接口
+这个概念的。
+
+上述的区别最终所造成的结果就是，由于数组是以固定的排序方法存在的，即数组必须是一组连续的内存区域，故而以数组为基础的遍历方式只能是按照索引遍历。而迭代器则不限制，在迭代器模式的类图中，具体的迭代器是有一条道具体聚合对象
+的关联线的，这就意味着迭代器的实现是与具体的聚合对象息息相关的，也就是说迭代器满足了多中迭代方式。
+
+好了，到目前为止，我们前面的所有讨论都是为何要使用迭代器模式，或者说迭代器模式解决了那些问题，我们来稍微总结一下。
+1、迭代器模式可以提供统一的迭代方式，这个要归功于Iterator接口。
+2、迭代器模式可以在对客户透明的前提下，做出各种不同的迭代方式。
+3、在迭代的时候不需要暴露聚合对象的内部表示，我们只需要认识Interator即可。
+4、在第1条的前提下，解决了基于数组的迭代方法中的重复遍历的问题。
+
+这里LZ就不在给出迭代模式的标准代码实现了，如果各位看过LZ的前十几篇设计模式，会发现，LZ其实很多时候是不写标准实现的，一个是因为网上的这种资料很多，很容易找到，LZ不想重复造轮子，还有一个重要原因是，标准实现宗难免
+给人死板硬套的感觉，很难让人理解，至少LZ个人当时是这种感觉。
+
+这里LZ直接使用迭代器模式，将我们上面的三个集合类稍微优化一下，首先我们应该写一个迭代器接口，它大概会有类图中的那几个方法，为了简单起见，我们直接利用JDK提供的Iterator接口，源码如下。
+
+/**
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   迭代器接口
+ */
+public interface Iterator<E> {
+
+	
+	boolean hasNext();
+	
+	E next();
+	
+	void remove();
+	
+}
+
+这里迭代器接口已经有了，我们还需要一个可迭代的类接口，在JDK中相当于Iterable接口，他规定了返回一个迭代器的行为，与我们类图中的Array接口类似，只不过哪里是toArray()方法，下面我们引用JDK中的Iterable接口，
+非常简单，源码如下。
+
+/**
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   Iterable接口,用于返回一个Iterator. 	
+ * @param <E>
+ */
+public interface Iterable<E> {
+
+	Iterable<E> iterator();
+	
+}
+
+下面我们就让三个集合类全部提供一个方法，可以返回一个Iterator实例，并且实现Inerable接口。
+
+/***
+ * 
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   简单实现的ArrayList 	 
+ * @param <E>
+ */
+public class ArrayList<E> implements Iterable<E>{
+
+	/**当数组满的时候，每次增加的长度**/
+	private static final int INCRMENT = 10;
+	
+	/**记录大小**/
+	private int size;
+	
+	/**初始化**/
+	private E[] array = (E[]) new Object[10];
+	
+	public void add(E e){
+		if(size < array.length){
+			array[size++] = e;
+		}else{
+			E[] copy = (E[]) new Object[array.length + INCRMENT];
+			System.arraycopy(array, 0, copy, 0, size);
+			copy[size++] = e;
+			array = copy;
+		}
+	}
+	
+	public Object[] toArray(){
+		Object[] copy = new Object[size];
+		System.arraycopy(array, 0, copy, 0, size);
+		return copy;
+	}
+	
+	public int size(){
+		return size;
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return new Itr();
+	}
+	
+	private class Itr implements Iterator<E>{
+		
+		int cursor = 0;
+
+		@Override
+		public boolean hasNext() {
+			return cursor < size();
+		}
+
+		@Override
+		public E next() {
+			return array[cursor++];
+		}
+
+		@Override
+		public void remove() {}
+	}
+	
+}
+
+/**
+ * @author bjtang
+ * @date   2017年8月2日  
+ * @desc   简单实现的linkedList 	
+ * @param <E>
+ */
+public class LinkedList<E> implements Iterable<E>{
+
+	/**头结点**/
+	private Node<E> head = new Node<E>(null, null, null);
+	
+	/**上一个节点**/
+	private Node<E> last = null;
+	
+	private int size;
+	
+	public LinkedList(){
+		head.next = head.prev = head;
+	}
+	
+	public void add(E e){
+		Node<E> newNode = new Node<E>(null, e, null);
+		if(head == head.next && head == head.prev){
+			//表示现在只有一个头结点
+			head.next = newNode;
+			newNode.prev = head;
+		}else{
+			//表示链表除了头结点,已经有别的节点了
+			newNode.prev = last;
+			last.next = newNode;
+		}
+		//最后一个节点的尾节点指向头结点
+		newNode.next = head;
+		last = newNode;
+		size++;
+	}
+	
+	public int size(){
+		return size;
+	}
+	
+	public Object[] toArray(){
+		Object[] result = new Object[size];
+		int i = 0;
+		for(Node<E> e = head.next; e != head; e = e.next){
+			result[i++] = e.e;
+		}
+		return result;
+	}
+	
+	private static class Node<E>{
+		Node<E> prev;
+		E e;
+		Node<E> next;
+		Node(Node<E> prev, E e, Node<E> next){
+			this.prev = prev;
+			this.e = e;
+			this.next = next;
+		}
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return new Itr();
+	}
+	
+	private class Itr implements Iterator<E>{
+		
+		private E element;;
+        private Node<E> next = head;
+		int cursor = 0;
+
+		@Override
+		public boolean hasNext() {
+			return cursor < size();
+		}
+
+		@Override
+		public E next() {
+			if(!hasNext()){
+				throw new RuntimeException("没有如此的一个元素异常");
+			}
+			element = next.next.e;
+			next = next.next;
+			cursor++;
+			return element;
+		}
+
+		@Override
+		public void remove() {
+		}
+	}
+}
+
+
+至于hash存储的数据是如何遍历的,并不清楚.所以就不写HashSet的遍历了
+
+这下我们已经将迭代器模式应用到了我们上面的例子中，至于remove方法，我们为了简短清晰，就不实现了，而且它并不影响我们理解迭代器模式，现在我们客户端的迭代方式就可以改变一下了，可以像下面这样迭代。
+
+/**
+ * @author bjtang
+ * @date   2017年8月3日  
+ * @desc   迭代器模式测试
+ */
+public class Client {
+
+	public static void main(String[] args) {
+
+		ArrayList<Integer> arrayList = new ArrayList<Integer>();
+		for (int i = 1; i <= 11; i++) {
+			arrayList.add(i);
+		}
+		System.out.println("arrayList size:" + arrayList.size());
+		Iterator<Integer> arrayListIterator = arrayList.iterator();
+		while (arrayListIterator.hasNext()) {
+			System.out.println(arrayListIterator.next());
+		}
+
+		System.out.println("----------------------------------------------");
+
+		LinkedList<Integer> linkedList = new LinkedList<Integer>();
+		for (int i = 1; i <= 11; i++) {
+			linkedList.add(i);
+		}
+		System.out.println("linkedList size:" + linkedList.size());
+		Iterator<Integer> LinkedListIterator = linkedList.iterator();
+		while (LinkedListIterator.hasNext()) {
+			System.out.println(LinkedListIterator.next());
+		}
+
+	}
+}
+
+其中输出的结果与第一例是一样的，都是将1到11输出三遍，可以明显看出，我们刚才的重复遍历问题不见了，而且三个集合类的迭代方法是一样的，而有了这个特点，JAVA在此基础上，给我们提供了foreach语法，所以我们可以写成下面
+这样。
+
+foreach可以循环数组和实现了Iterable接口的类。
+
+我们现在来看一下类的UML图
+
+/pattern/src/main/java/com/tbj/pattern/iterator/updater/20130720175106390.jpg
+
+从类图中可以清楚的看出，与迭代器模式的类图是一模一样的，当然，客户端与Iterable的依赖关系有待商议，之前我们已经提到过，JAVA集合框架的厂家方法模式是非常透明的处理方式，所以我们很多时候不会使用Iterable，不过这
+并不影响我们对迭代器的理解。
+
+然后迭代器模式带来的好处已经不可言喻，上面已经分析过，这里就不在重复了。
+值得注意的是，LZ全部采用的内部类作为各个集合类迭代器的实现，这在LZ之前的文章中已经提到过，当时的解决是说内部类为了完全杜绝客户端对迭代器实现类的依赖，而进行的到现在，我们可以更深一步讨论。
+
+这里我们的理解是。内部类在这里的目的是为了隐藏实现细节，并且如此以来，迭代器的实现类可以自由的使用集合类的各个属性，而不需要集合类提供自己属性的访问接口以及建立二者的关联关系。
+
+不过缺点也是接肘而至，由于具体的集合类与具体的迭代器是绑定的关系，所以这种实现在复用的过程中会有很大的限制甚至不能复用。
+
+迭代器模式是为了在隐藏聚合对象内部表示的前提下，提供一种遍历聚合对象元素的方法，这在之前的例子当中已经有了体现，我们给三个集合类提供了统一的遍历方式，消除重复遍历，最终还使用内部类将细节包装在集合类内部隐藏起来，
+使得外部无法访问集合类的任何一个属性。
+
+这当中还使用了工厂方法模式，这个在工厂方法模式那一章中，已经提供到过，至于迭代器的产生，是工厂方法模式处理的，两个设计模式互相结合，让JAVA的集合框架更加优美，健壮。
+

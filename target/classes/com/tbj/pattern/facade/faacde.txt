@@ -1,0 +1,179 @@
+外观模式：facade
+外观模式是软件工程中常用的一种软件设计模式，它为子系统中的一组接口提供一个统一的高层接口。这一接口使得子系统更加容易使用。
+该定义引用百度百科，它的表现很简单，将一系列子接口的功能进行整理，从而产生一个更高层的接口。
+相信做JAVA的各位大部分是WEB开发，那么肯定都是对XXXDao，XXXService非常熟悉了，这显然和外观模式有一腿，当然，还有一大部分是 andrioid开发，LZ没接触过android开发，
+但是LZ大胆的想像，在移动领域的JAVA开发，应该也有类似的情况发生。
+
+接下来，我们来看看外观模式的标准类图。
+
+/pattern/src/main/java/com/tbj/pattern/facade/facade.jpg
+
+上述便是外观模式的类图，它主要由两部分组成，一部分是子系统（包括接口，实现类，等等）
+
+上述便是外外观模式的类图，它主要由两部分组成，一部分是子系统（包括接口，实现类，等等），一部分是外观接口和实现类，外观接口负责提供客户端制定的服务，外观实现则负责组合子系统中各个类
+和接口完成这些服务，这样就解除了客户端与子系统的依赖，而让客户端只依赖于外管接口，这是一个优秀的解耦实践。
+
+下面LZ依然使用JAVA代码将上述的类图诠释出来，我们来直观的看看外观模式的方式方式，首先是我们的子系统，它包括三个接口，三个实现，LZ这里一并给出。
+
+
+接口，类似于dao层的接口，具体的某个操作
+public interface Sub1 {
+
+	void function1();
+	
+}
+
+public interface Sub2 {
+
+	void function2();
+	
+}
+
+public interface Sub3 {
+
+	void function3();
+	
+}
+
+//dao接口的实现类
+public class Sub1Impl implements Sub1{
+
+	@Override
+	public void function1() {
+		System.out.println("子系统中Sub1接口的功能");
+	}
+
+}
+
+public class Sub2Impl implements Sub2 {
+
+	@Override
+	public void function2() {
+		System.out.println("子系统中Sub2接口的功能");
+	}
+
+}
+
+public class Sub3Impl implements Sub3 {
+
+	@Override
+	public void function3() {
+		System.out.println("子系统中Sub3接口的功能");
+	}
+
+}
+
+
+//外观，类似于service层，对dao层进行了包装来解决对应的问题，以供客户端（controller）调用.
+public class FacadeImpl implements Facade{
+	
+	private Sub1 sub1;
+	
+	private Sub2 sub2;
+	
+	private Sub3 sub3;
+	
+	public FacadeImpl(){
+		this.sub1 = new Sub1Impl();
+		this.sub2 = new Sub2Impl();
+		this.sub3 = new Sub3Impl();
+	}
+	
+	public FacadeImpl(Sub1 sub1, Sub2 sub2, Sub3 sub3){
+		this.sub1 = sub1;
+		this.sub2 = sub2;
+		this.sub3 = sub3;
+	}
+
+	@Override
+	public void function12() {
+		sub1.function1();
+		sub2.function2();
+	}
+
+	@Override
+	public void function23() {
+		sub2.function2();
+		sub3.function3();
+	}
+
+	@Override
+	public void function123() {
+		sub1.function1();
+		sub2.function2();
+		sub3.function3();
+	}
+
+}
+
+//以上便是我们的外管接口和实现类，它当中的功能一般是根据是客户端的需求定制的，将客户端的一个完整功能作为一个行为，然后调用子系统完成，下面我们看看客户端的调用
+public class Client {
+
+	public static void main(String[] args) {
+		Facade facade = new FacadeImpl();
+		facade.function12();
+		System.out.println("-------------------------");
+		facade.function23();
+		System.out.println("-------------------------");
+		facade.function123();
+
+		/* 以上为使用了外观模式的调用方式，以下为原始方式 */
+
+		System.out.println("-------------以下原始方式--------------");
+		Sub1 sub1 = new Sub1Impl();
+		Sub2 sub2 = new Sub2Impl();
+		Sub3 sub3 = new Sub3Impl();
+		sub1.function1();
+		sub2.function2();
+		System.out.println("-------------------------");
+		sub2.function2();
+		sub3.function3();
+		System.out.println("-------------------------");
+		sub1.function1();
+		sub2.function2();
+		sub3.function3();
+	}
+
+}
+
+LZ在下面还给出了原始的调用方式，可以看出外观模式的作用下，我们的客户端只依赖外观一个接口，而在原始的方式下，我们的客户端依赖整个子系统，所以外观模式主要解决的是类之间的耦合过于复杂。
+
+以上便是标准的外观模式展现，LZ下面再给出需要知晓的几点：
+1、实际使用当中，接口并不是必须的，虽说根据依赖倒置原则，无论是出于高层的外观层吗还是处于底层的子系统，都应该依赖于抽象，但是这会导致子系统的每一个实现都要对应一个接口，从而导致
+系统的复杂性增加，所以这样做并不是必须的。
+2、外观接口当中并不一定是子系统中某几个功能的组合，也可以是将子系统中某一个接口的某一个功能单独暴露给客户端。
+3、外观接口如果需要暴露给客户端很多的功能的话，可以将外观接口拆分为若干个外观接口，如此便会形成一层外观层。
+
+上述LZ给出的第三点，便是为了引出我们的标题当中的service，相信各位做过web开发的都见过我们项目中很多的service和dao（注：小型项目或许不需要service这一层），这一层service
+层，有一个非常重要的作用，就是为了方便我们管理项目中的业务逻辑相关的事物，而service层，其实是给我们的事物管理器提供一个可以方便的配置切入点的事务管理层。
+
+除了上述这个重要的功能外，service层同时也是组合dao层暴露给controller的功能，dao层的各个类只是简单的数据操作对象，它们不具有业务逻辑，而赋予了它们业务逻辑方便controller
+调用的功能，正是service这一层，假设没有service这一层，你的action当中的很多功能都要需要依赖多少个dao才可以完成工作。
+
+同时在WEB项目中，有的项目会抽象出一层service接口和一层dao接口，这是为了降低客户端（这里的客户端可以认为是controller）与业务实现细节以及service外观层与数据操作实现细节
+的耦合，而有的项目则没有抽象层，这也并非是不合适的。
+
+首先添加抽象层会大大的加剧项目的类文件数量，从而使项目的复杂性增加，而且在项目刚进入开发的时候，往往接口是不稳定的，因为我们经常需要给某一个service添加一个方法，而为了将方法暴露给
+客户端（即controller），我们必须将该方法添加到对应的接口当中。
+
+所以针对这一情况，我们更好的做法是等到接口行为相对稳定时，在考虑是否要重构去添加抽象接口，而且现在IDE工具都在一定程度上对重构进行了支持，比如eclipse就可以直接导出一个类的接口。所
+以我们完全可以在需要时快速的给项目添加抽象的接口层。
+
+相比起观察者模式，适配器模式等适合小规模使用的设计模式，外观模式更多的是大范围的使用，它会是很多时候支撑我们整个架构的设计思路。
+
+鉴于此，LZ此处不再给出具体的service和dao的示例，各位的项目中到处充斥着这种例子。
+
+如果形象的去形容外观模式在WEB中的应用，可以说让 controller和dao分了手，而插入了一个第三者service，断开了controller与dao的耦合，转而使用更高层的service。
+
+这里需要提醒各位的是，外观模式并不是简单的使用组合将功能组合起来，也就是说它的重点不在组合功能，而在于制作一个对外暴露的外观，它一般是用于将一个子系统（注意：是一个子系统，也就是说外观
+并不是简单的几个类的组合就是外观模式了）的功能进行调配，暴露给客户端的一个外部的表象，使得客户端与子系统断开依赖关系
+
+由于外观模式属于一种“大”模式， 所以我们平时很少会接触到，但是有很多技术的应用，其实都有着外观模式的影子。
+
+比如webservice，她就是给一个WEB应用提供一个外观，让客户端可以调用一些接口去使用WEB应用中的一些功能或者说服务，再比如API，中文名称的应用程序接口，它其实也可以看做是给底层的
+操作系统做了一层外观，使程序员在编程的时候可以直接使用外观提供的接口，从而间接的指挥操作系统完成的一些事情。
+
+本次外观模式的分享，LZ没有像之前一样写一堆代码给各位看，更多的是在讨论外观模式的应用场景和应用范围，希望各位看完之后对外观模式有一个宏观的认识，而不是仅限于代码层次的理解。
+
+
+

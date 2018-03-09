@@ -1,0 +1,405 @@
+命令模式
+背景：小左是魔都某公司技术部的一名屌丝程序员，每天的工作就是维护一个20世纪的古董级项目，由于公司不大，所以公司很多制度不太完善，导致小左每天都郁闷异常，只是靠偶尔的在刚毕业的小美女程序
+员旁边露一手，来丰富自己的精神生活
+
+某一天下午一点半，阴
+
+小左正趴在桌子上，迷迷糊糊想着某些歌不切实际的美梦，忽然QQ上“滴滴滴”的声音，将本就是半梦半醒的小左给吵醒了，无奈之下，小左只好懒懒散散的抬起头，打开QQ消息。
+业务人员A:“小左啊，我们的xx列表需要加一个显示项和搜索项，你看你啥时候能做完呀，这个很急”
+小左眯缝着眼一看，心里小小一盘算，不算太复杂，于是就匆匆的回复了。
+小左：“这个啊，很快，下午搞定。”
+于是小左摩拳擦掌的就开始准备下手，结果eclipse还没打开，QQ就又响了。
+业务人员B：“小左呀，我们的XX页面需要改一下啊，得多添加几个保存项，你看你啥时候能做完，给我个时间？”
+心里嘀嘀咕咕的盘算了一下，小左就回复到：“大概需要大半天吧，明天搞定成不？”
+业务人员B：“不行呀，这个很急呀，最好今天就做完，你看你加加班，搞定它，没问题吧？”
+小左心里一边骂娘，一边回复到:"好吧，我尽快，"
+关了QQ窗口，小左心里开始犯嘀咕：“这下活多了，得赶紧，争取一下，一下午做两个功能差不多，幸亏自己再给完成任务时间时多加了一点”
+刚要下手，小左的QQ又响了起来、
+业务人员C：“小左呀，我刚带一个客户来做业务，我不小心吧东西填错了，你看你能不能给我改一下，客户在这等着呢，捉急啊，”
+小左的心里已经开始抓狂了，但还是淡定的回复到：“好吧，我看看”
+不过刚连上生成环境的数据库，select语句还没有写完，小左的QQ又响了起来。
+业务人员D：“小左啊，我们的系统为什么XX列表点搜索不好用呀，你赶紧把这个问题解决一下，这么简单的系统杂么这么多问题啊”
+小左此时已经彻底被激怒，一个程序员最忍受不了的就是被不懂程序的人指指点点，于是没好气的回复到：“尽量吧，这会太忙，没空。”
+
+这一下，估计是刚毕业的小美女听到了不断的QQ消息声，竟然主动和小左搭话。
+小甜甜：“噢爸（韩语），你好像很忙啊，要不要小妹帮帮你啊。”
+ 小左：“没事，你刚来公司没多久，业务还不太熟悉，这点事我分分钟就搞定。”
+ 说完，小左还扬起嘴角，摆了个超自信的表情，简直是猥琐到极点。
+ 不过这一招对付刚毕业的单纯小姑娘还真好使，只见小甜甜一脸的崇拜相，笑着回道：“你好棒哦，谢谢噢爸的照顾啊。”
+ 
+这不吹牛不要紧，苦逼的小左愣是独自加班到夜里十一点半，把今天接到的任务都给搞定了，为的就是在小甜甜面前证明自己的能力。这血淋淋的事实说明了，屌丝的生活中，随便一个有点姿色的美女都足以秒杀屌丝，并且让其卖命。
+  托着疲惫的身体回到家中，小左到了家里就往床上一躺，衣服袜子扔的满屋子都是，也懒得洗脸刷牙，就准备睡觉了。
+ 忽然小左猛地坐起来，自言自语到：“对啊，今晚该写博客了，好久没写了，最近都忙的不行了。”
+ 想到这些，小左觉得刚才的困意一瞬间就消失无踪，这也算是屌丝的一大气质了吧---夜里欢。 
+随着电脑的缓慢的启动，小左的脑子中就开始飘荡着今天的事，“由于公司的制度不完善，人员缺乏，导致业务人员一直一有什么事情，全部都来找自己，本来自己就已经身兼数职，现在还要每天面临业务员员们的各种炮轰，实在有点受不了啊。”
+于是，小左想着想着，就打算将这个问题写出来，看能不能从代码里找到现实中解决问题的答案。
+在键盘前犹豫片刻后，小左先把自己用JAVA代码解释了一遍
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   程序员类，需要解决的事情 
+ */
+public class Programmer {
+
+	private String name;
+	
+	public Programmer(String name){
+		this.name = name;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public void handleDemand(){
+		System.out.println(name + "处理新需求");
+	}
+	
+	public void handleBug(){
+		System.out.println(name + "处理bug");
+	}
+	
+	public void handleProblem(){
+		System.out.println(name + "处理线上问题");
+	}
+}
+
+看着自己的功能，小左不禁感叹，“自己就是一个机器呀，感叹之余，小左又继续摸着下巴思考了片刻，写出了业务人员的类”
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   业务人员类，直接指挥程序员做事情
+ */
+public class Salesman {
+
+	private String name;
+	
+	public Salesman(String name){
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void putDemand(Programmer programmer){
+		System.out.println("业务员" + name + "提出新需求");
+		programmer.handleDemand();
+	}
+	
+	public void putBug(Programmer programmer){
+		System.out.println("业务员" + name + "提出bug");
+		programmer.handleBug();
+	}
+	
+	public void putProblem(Programmer programmer){
+		System.out.println("业务员" + name + "提出线上问题");
+		programmer.handleProblem();
+	}
+	
+}
+
+最后，小左就干脆拿今天的工作为例，写了一下一天的工作
+
+public class Work {
+
+	public static void main(String[] args) {
+		
+		Programmer programmer = new Programmer("小左");
+		
+		Salesman salesmanA = new Salesman("A");
+		salesmanA.putDemand(programmer);
+		
+		Salesman salesmanB = new Salesman("B");
+		salesmanB.putBug(programmer);
+		
+		Salesman salesmanC = new Salesman("C");
+		salesmanC.putProblem(programmer);
+		
+	}
+}
+
+运行结果：
+	业务员A提出新需求
+	小左处理新需求
+	业务员B提出bug
+	小左处理bug
+	业务员C提出线上问题
+	小左处理线上问题
+
+看着运行结果，小左不禁发出无奈的笑声，暗自为自己感到悲哀，仔细的看着代码，小左开始分析一一分析自己的悲哀
+
+1、业务员和自己的耦合度太高，导致每个业务人员都可以直接命令自己，这导致自己心里很不爽。
+2、由于自己本身只是个程序员，所以自己对公司的业务并不是特别擅长，很难给任务制定优先级，给任务排序，自己所擅长的还是码代码，结果造成的后果就是经常按时完成一个不重要的任务，但不小心却将很重要的任务向后推了，如果业务人员
+告状，自己可能就要挨批，可是这么多业务人员提问题，到底谁轻谁重，我哪知道。
+3、如果任务堆积过多的时候，自己有时会忘记其中一个甚至几个，人毕竟精力是有限，如果任务多了，难免出现这种情况，结果有的业务人员就直接告状到老板那里，实在是憋屈。
+4、由于任务是随即产生的，业务人员什么时候想到任务就随时给自己，所以没有一个整体的规则，很容易导致自己加班
+
+“看来，说来说去，还是业务人员跟我太紧密了啊，”小左叹气道。
+
+由于最近在研究设计模式，所以就想到了是不是可以用设计模式来解决自己和业务人员之间的问题，于是小左开始在度娘上面找寻适合的设计模式
+
+“有了，命令模式应该是可以解决的，看它的定义好像挺符合的”。电脑前的小左突然一拍大腿，大叫道。
+
+定义：在软件系统中，“行为请求者”与“行为实现者”通常呈现一种“紧耦合”。但在某些场合，比如要对行为进行“记录，撤销\重做，事物”等处理，这种无法抵御的变化的紧耦合是不合适的，在这种情况下，如何将“行为请求者”与“行为实现者”
+解耦？将一组行为抽象为对象，实现两者之间的松耦合。这就是命令模式。
+
+看着这个定义，小左心中想着：“命令模式所说的两个角色，不正是我和业务人员吗？业务人员是行为请求者，他们请求我，噢，不，应该说命令我产生编码，修改bug和处理线上问题的行为，而我就去实现或者说执行这些行为，况且，看命令模式
+的定义，还可以支持记录，我正需要这个记录啊，否则每次任务太多，忘记哪个任务，都要我挨批。”
+
+于是小左迫不及待的开始研究命令模式的类图，试图从中找到解决的办法
+
+类图：
+/pattern/src/main/java/com/tbj/pattern/command/20130629212400406.jpg
+
+“不对啊，这个模式当中好像有个invoker（调用者），这会是什么样的人呢？”小左看着命令模式的类图，不禁有些疑惑
+小左看到类图的时候，一下子就看出自己便是Receiver，而业务人员便是Client，可是这个Invoker是什么呢？从类图上看，小左知道，这应该是一个特别的人，它是专们用来记录业务人员提出的需求，bug以及线上的问题等等，并且还要
+负责通知我完成各个任务。
+“我擦，这不就是产品经理吗。”小左的脑子中忽然闪现出这个名词。
+“这下有了，产品经理负责接受业务人员各个任务，然后通过过滤和排好优先级以后再交代给我完成，并且他可以记住所有接受过的任务，这样我也不会再忘记，因为有他提醒这我呢。”
+说干就干，小左立马就开始尝试用命令模式去处理自己和业务人员的关系的紧耦合关系，而解决这个问题最直接的手段就是添加一个产品经理，并且将各个任务都抽象成一个对象，这样产品经理就可以管理这些对象了，或者也可以说是管理这些任务。
+
+小左觉得自己的类是不需要变化的，主要变化的是要添加一组抽象的行为对象，还有改变客户端调用的方式，也就是业务人员的类。
+
+那么首先是添加命令接口和具体的命令，不过这里似乎叫任务（Task）更合适，下面就写。
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   任务接口 
+ */
+public interface Task {
+
+	void handle();
+	
+}
+
+快速的写出这个接口，小左的脑子里开始思考具体的命令应该是那几个，而且具体的命令是要关联一个接受者的，而接受者正是自己，也就是Programmer。
+“有了，应该有整几个具体的命令。” 有了思路，小左就开始疯狂的敲打键盘码代码，写出下面几个具体的任务。
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   具体的需求任务 	
+ */
+public class Demand implements Task {
+	
+	private Programmer programmer;
+	
+	public Demand(Programmer programmer){
+		this.programmer = programmer;
+	}
+
+	@Override
+	public void handle() {
+		programmer.handleDemand();
+	}
+	
+	@Override
+	public String toString() {
+		return "Demand [Programmer =" + programmer.getName() + "]";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   具体的bug任务
+ */
+public class Bug implements Task{
+	
+	private Programmer programmer;
+
+	public Bug(Programmer programmer){
+		this.programmer = programmer;
+	}
+	
+	@Override
+	public void handle() {
+		programmer.handleBug();
+	}
+	
+	@Override
+	public String toString() {
+		return "Bug [Programmer =" + programmer.getName() + "]";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   具体的线上问题任务
+ */
+public class Problem implements Task{
+		
+	private Programmer programmer;
+	
+	public Problem(Programmer programmer) {
+		this.programmer = programmer;
+	}
+
+	@Override
+	public void handle() {
+		programmer.handleProblem();
+	}
+	
+	@Override
+	public String toString() {
+		return "Problem [Programmer =" + programmer.getName() + "]";
+	}
+	
+}
+
+“这下妥了，这些任务包括了新的需求，bug和线上问题等等这些种类，而接受者正是我自己，或者说是程序员，所以handle方法里面，应该使用程序员处理这个任务。” 顿了一下，小左继续自言自语道：“这下就差一个最主要的角色，产品经理”
+，我们来试着写一下。”
+
+/**
+ * @author bjtang
+ * @date   2017年7月4日  
+ * @desc   产品经理实现类 	
+ */
+public class ProductManager {
+
+	private static final int TASK_NUMBER_IN_DAY = 4; //一天最多分排掉四个任务，多了推到第二天
+	
+	private List<Task> taskList;
+	
+	public ProductManager(){
+		taskList = new ArrayList<Task>();
+	}
+	
+	//添加一个任务
+	public void receive(Task task){
+		taskList.add(task);
+	}
+	
+	//分配给程序员，督促程序员完成
+	public void assign(){
+		Task[] copy = new Task[taskList.size() > TASK_NUMBER_IN_DAY ? taskList.size() - TASK_NUMBER_IN_DAY : 0];
+		for(int i = 0; i < TASK_NUMBER_IN_DAY && i < taskList.size(); i++){
+			taskList.get(i).handle();
+		}
+		System.arraycopy(taskList.toArray(), TASK_NUMBER_IN_DAY > taskList.size() ? taskList.size() : TASK_NUMBER_IN_DAY, copy, 0, copy.length);
+		taskList = Arrays.asList(copy);
+	}
+	
+	//打印剩下的任务
+	public void printTaskList(){
+		if(taskList == null || taskList.size() == 0){
+			System.out.println("--------当前无任务---------");
+			return;
+		}
+		System.out.println("-------当前剩下的任务列表-----");
+		for(Task task : taskList){
+			System.out.println(task);
+		}
+		System.out.println("-----------------------");
+	}
+	
+	/**
+	 * 测试
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<String>();
+		list.add("a");
+		list.add("b");
+		list.add("c");
+		list.add("d");
+		list.add("e");
+		String[] copy = new String[list.size() > TASK_NUMBER_IN_DAY ? list.size() - TASK_NUMBER_IN_DAY : 0];
+		for(int i = 0; i < TASK_NUMBER_IN_DAY && i < list.size(); i++){
+			System.out.println(list.get(i));
+		}
+		/**
+		 * System.arraycopy:我们可以使用它来实现数组之间的复制。
+		 * public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length);
+		 * src:源数组， 
+		 * srcPos:源数组要复制的起始位置
+		 * dest:目标数组
+		 * destPos:目标数组放置的起始位置
+		 * length:复制的长度.
+		 * 注意：src 和 dest 必须是同类型的数组或者可以进行转换类型的数组.
+		 */
+		System.arraycopy(list.toArray(), TASK_NUMBER_IN_DAY > list.size() ? list.size() : TASK_NUMBER_IN_DAY, copy, 0, copy.length);
+		list = Arrays.asList(copy);
+		System.out.println(list);
+	}
+}
+
+"仔细想想，产品经理负责的任务还挺多的呢，比如优先级排序，任务过滤，需求转化等等，怪不得产品经理要比程序员工资高呢，不过貌似全部写出来有点复杂啊，就让他负责记录下任务，然后分配下任务吧。"小左皱着眉头自言自语道。
+“不过这样的话，业务也应该变一下了，他是要认识产品经理的。”
+
+/**
+ * @author bjtang
+ * @date   2017年7月7日  
+ * @desc   业务员人员类
+ */
+public class Salesman {
+
+	private String name;
+	
+	public Salesman(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void putDemand(ProductManager productManager, Programmer programmer){
+		System.out.println("业务员 " + name + "提出新需求");
+		productManager.receive(new Demand(programmer));
+	}
+	
+	public void putBug(ProductManager productManager, Programmer programmer){
+		System.out.println("业务员 " + name + "提出bug");
+		productManager.receive(new Bug(programmer));
+	}
+	
+	public void putProblem(ProductManager productManager, Programmer programmer){
+		System.out.println("业务员 " + name + "提出线上问题");
+		productManager.receive(new Problem(programmer));
+	}
+}
+
+"这下好了，业务人员再也不能让我直接去写代码了，必须得发给产品经理，再让产品经理分配给我，这下我看下我的工作应该是什么样子了。"
+
+“哈哈，这下业务人员彻底不认识我了，只认识产品经理，只不过由于公司就我一个程序员，所以产品经理那个平均 的循环分配算法，分来分去还是分给我一个人了，不过这个也没办法，公司不招人，我说了也不算。”
+
+虽然最终这些任务都还是小左去做，但是这下小左不用加班了，一天最多四个任务，就算完不成临时需要加班，那也是小左编码速度的问题，心里相对会舒服很多，不至于太憋屈，毕竟自己没完成，那会加班也会心甘情愿。
+
+这会小左心情好了，心情一好，小左竟然开始手动画起了刚才的类图来了
+
+/pattern/src/main/java/com/tbj/pattern/command/20130630010349328.jpg
+
+小左看着自己的作品，自言自语道:"虽然这个实际的类图比命令模式的原版类图多了一层关系，就是ProductManager 和 Programmer 的关联关系，但是其它的可是和命令模式一模一样，而且很明显，业务人员 和我们的程序员之间
+没有关系关系了。"
+
+总结：
+“为了减轻自己的负担，我添加一个产品经理，并且还将任务抽象成类，这样确实解决了我很多问题，我的稍微总结下”
+1、程序员和业务员解耦，不直接打交道。
+2、产品经理分担了程序员的很多潜在任务，比如制定任务的优先级，先做那个后做那个。
+3、程序员不至于忘记其中的一个任务，因为产品经理那里有任务列表。
+4、任务有规划的完成，不至于加班或者说加班太频繁。
+
+用编程的语言来解释命令模式的使用场景或者可以解决的问题，就是下面几点。
+1、希望将行为请求者和行为实现者解耦。不直接打交道。
+2、希望分离掉行为请求者一部分责任，行为请求者只需要将命令发给调用者，不在主动的去让行为实现者产生行为，符合单一职责原则。
+3、希望可以控制执行的命令列表，方便记录，撤销/重做以及事物等功能。
+4、期待可以将请求排队，有序执行
+5、希望可以将请求组合使用
+
+“不过上面我总结的第五点在例子当中没有体现，不过这个也好办，其实就相当是任务可以组合，比如一个线上的问题很可能伴随着一个bug，这样的话可以做一个组合的任务，既要处理线上的问题同时也要处理bug”
+
+命令模式的优点和缺点
+优点：
+1：最大的优点：就是将行为请求者和行为实现者解耦
+2：命令的添加特别方便，并且可以方便的制定各种命令和利用现有命令组合出新的命令。
+3：如果针对每一类具有共同接口的接受者制作一个调用者，可以控制命令的执行情况。
+缺点：
+命令模式和大部分设计模式一样，会增加系统的复杂性，这里的复杂性应该主要指的是类的数量，这个倒是好理解，看一下上面的例子就知道多了很多类。

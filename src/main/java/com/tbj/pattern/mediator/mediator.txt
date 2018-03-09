@@ -1,0 +1,418 @@
+中介者模式：
+
+自盘古开天辟地以来，模式大陆上，逐渐孕育出一种具有高级智慧的生物----人类。
+多年以来，人类凭借着强大的繁衍能力，使得人类的数量急剧增长，伴随着数量的增加，各种争执和战争开始不可避免的产生，这一度使人类的数量急剧减少，模式大陆也岌岌可危。
+不过自古乱世出英雄，就在大陆上各个势力纷杂排布，战争不断时，一位名为GOF的绝世强者凭空出世，他一生修行，最终领悟天道，掌握了单一、迪米特、接口隔离、里氏替换、依赖倒置、开闭六大天道，也正因如此，后人都称其为六道天人。
+当时凭借着六大天道，GOF在模式大陆以一敌万并非虚言，进而一举统一天下，制止了人类无尽的战争。随后，GOF为了方便控制模式大陆，创造出二十三个修行分支，设立门派和宗主，并亲自传授各宗主修炼之道，让其帮助掌管一方土地。
+
+       随后二十三门派渐渐稳定了模式大陆的局势，而六道天人本人，自那以后，则再未出现过。
+
+       要说这二十三门派当中，实力最强的一派便是抽象工厂宗门，由于其门派绝学《抽象工厂模式》高度的抽象化，使得抽象工厂宗主的实力要稍稍领先于各个宗门。但总的来说，各个门派的宗主，其实力都在伯仲之间。值得一提的是策略宫，相较策略宫宫主的实力，可以说任何一个宗门的宗主都在其之上，但是其层出不穷的策略一向阴狠毒辣，令人防不胜防，所以各大门派都对其十分厌烦。
+
+       
+
+       中介者神阁，阁主大厅。
+
+       “参见左阁主！”大厅内，一群人正全部单膝跪地，恭敬的向正位上端坐的一人行礼。
+
+       这位左阁主看起来年龄不大，中分头，身材也属于矮小一列，一脸的青春美丽痘象征着他还属于青年阶段，猛一看去，实在是不像一位高高在上的阁主。但这并没有影响到这位阁主在阁中的威望，因为所有神阁中的人都知道，左阁主仅用了两年的时间，潜心修炼阁中绝学《中介者模式》，就以绝对的优势，打败了原阁主，进而登上了阁主宝座。
+
+       “起来吧！各位长老齐聚本座大厅，想必是有什么要事禀报吧。”左阁主的左手轻轻一摆，众人便自觉一股推力凭空而出，将众人全部托起。
+
+       “阁主，最近由于六道天人大人久未现身，各个宗门都蠢蠢欲动，尤其是与我神阁相距不远的命令门和单例宗，近期总是隔三差五的骚扰我神阁，请阁主下令，命属下带领阁中将士铲平异族。”众人之中，一位约莫七十岁的白发老人说道，尤其是说到最后时，老者明显情绪波动很大，显然是对于命令门和单例宗的做法十分愤怒。
+
+       “戚长老莫要冲动，最近碰见这种事的可不止我神阁，这件事并不该是各个宗门自行处理，本阁主要想一个万全之策。”
+
+       左阁主在听完戚长老的话之后，神色之间并没有任何慌乱与愤怒，而是十分淡然的挥了挥手，表示让众人先退下，由他思量之后再做定夺。不过在神阁中，戚长老是出了名的冲动派，尽管已经年迈七旬，但却比一些个二十多岁的青年还要冲动。
+
+       “阁主，我们阁中已经损失了不少人手，难道阁主就如此轻易的便宜那帮无耻之徒吗？”戚长老并未立即退出，而是向前一步继续说道。
+
+       “放肆，你想违抗本阁主的决定吗！”听到戚长老的话，左阁主猛然释放出自身的气势，愤怒的说道。
+
+       被左阁主的气势所压迫，戚长老知道，此时再多言的话，恐怕今日就真的要被阁主收拾一番了，于是，心中虽然不情愿，但还是信誓旦旦的离开了。
+
+       
+
+       中介者神阁，阁主卧房。
+
+       “当年六道天人曾预言，模式大陆将会产生第二次动荡，想必就是指的此事了吧。”左阁主眉头微皱，喃喃的说道。
+
+       顿了一下，左阁主继续自言自语道：“老阁主在传位时曾告诉我，六道天人当年预测出大陆的第二次动荡时，曾专门夜访中介者神阁，并告知老阁主，此次动荡若想彻底压住，则需要依靠中介者神阁的力量，而其中的关键，正是藏于本阁的秘籍《中介者模式》当中。看来此次，我是要仔细研究一下本阁的震阁之宝了。”
+
+       说着，左阁主便盘膝而坐，灵魂当中开始参透《中介者模式》与此次动荡的关联，而《中介者模式》秘籍的内容也一一浮现于左阁主脑海。
+      
+      
+中介者模式：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互，中介者模式又称为调停者模式，它是一种对象行为型模式。
+
+“按照当年六道天人所说，这秘籍当中所说的一系列的对象，应该就是指的各个门派了吧，现在各个门派之间相互单独交往，关系复杂，很难让大陆安静，左阁主说着说着，虚空之中便出现一副当前大陆格局的地图”。
+
+/pattern/src/main/java/com/tbj/pattern/mediator/20130630192126640.jpg
+
+“虽然有了抽象的父类门派，但是各个具体门派之间的关系，看起来实在有点混乱，如果要用秘籍暗语来诠释的话，我神阁和命令门以及单利宗的关系应该是这样的。”左阁主说着，双手则开始在虚空之中画了一个个奇异的符号。
+
+“首先是一个抽象的门派父类，它代表了我们各个门派的共性，这个好像有点像模板宗的秘籍《模板方法模式》的味道，像是一个模板类。”
+
+/**
+ * @author bjtang
+ * @date   2017年7月11日  
+ * @desc   门派抽象类
+ */
+public abstract class School {
+
+	public void defense(){
+		System.out.println(getName() + "防御");
+	}
+	
+	public void attack(School school){
+		System.out.println(getName() + "攻击" + school.getName());
+	}
+
+	public abstract String getName();
+	
+}
+
+“下面就是我神阁以及命令门还有单利宗具体的门派了，” 左阁主说着，一个个奇异的符号不断的从其手中涌出，飘散在前方的虚空之中。
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   中介者神阁 
+ */
+public class MediatorSchool extends School {
+
+	@Override
+	public String getName() {
+		return "中介者神阁 ";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   命令门
+ */ 
+public class CommandSchool extends School {
+
+	@Override
+	public String getName() {
+		return "命令门";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   单利宗
+ */
+public class SingletonSchool extends School {
+
+	@Override
+	public String getName() {
+		return "单利宗";
+	}
+
+}
+
+“有了这些的话，现在大陆的格局就好描述了，应该就是现在这样了。”
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   大陆格局
+ */
+public class ContinentalPattern {
+
+	public static void main(String[] args) {
+		
+		School singletonSchool = new SingletonSchool();
+		
+		School commandSchool = new CommandSchool();
+		
+		School mediatorSchool = new MediatorSchool();
+		
+		singletonSchool.attack(mediatorSchool);
+		
+		commandSchool.attack(mediatorSchool);
+		
+		mediatorSchool.defense();
+	}
+}
+
+输出结果:
+ 	单利宗攻击中介者神阁 
+	命令门攻击中介者神阁 
+	中介者神阁 防御
+	
+“这样果然不行啊，各个门派可以随意进攻，混乱不堪，没有任何节制力量，而且各个门派交往起来非常繁琐，每个门派都要应付与其余二十二个门派的关系，怪不得现在模式大陆逐渐开始混乱呢，况且我神阁都已经被单利宗和命令门攻击一段时间了
+，最后才迟迟反应过来，慌忙的采取防御策略，难免损失惨重。”看着虚空之中漂浮的文字结果，左阁主暗暗地摇头道。
+
+顿了一下，左阁主继续自言自语道：“按照我神阁秘籍所述，大陆之中应该出现一个中介者对象，他可以负责各个门派之间的交往以及控制各个门派的动作，这样的话，确实可以解决大陆的动荡，去除掉各个门派之间复杂的关系，让所有的门派都听命
+于这个中介者，看来六道天人果然料事如神啊。”
+
+双眼闭紧思考片刻之后，左阁主便猛然睁开双眼，随即一字一顿的说出了中介者的名称， “模式联門“。
+
+随后，左阁主的双手在虚空中一阵虚画，一个个秘籍暗语在虚空之中散发着夺目的光芒，这些光芒赤染组成了模式联門接口。
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   模式联門，中介者接口
+ */
+public interface IPatternAlliance {
+
+	//加入联門
+	public void add(School school); 
+	
+	//提出联門
+	public void remove(School school);
+	
+	//联門攻击
+	public void resolveAttack(School activeSide, School passiveSide);
+	
+	//联門防御
+	public void resolveDefense(School passiveSide);
+	
+}
+
+"这便是联門接口了，它算是模式联門的联門宗旨，指导着联門所要做的事情。"左阁主点头道。
+
+“下面便是模式联門的真正面目了”.
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   模式联門，中介者 	
+ */
+public class PatternAlliance implements IPatternAlliance {
+	
+	private List<School> schoolList;
+	
+	public PatternAlliance(){
+		schoolList = new ArrayList<School>();
+	}
+
+	@Override
+	public void add(School school) {
+		schoolList.add(school);
+	}
+
+	@Override
+	public void remove(School school) {
+		schoolList.remove(school);
+	}
+
+	@Override
+	public void resolveAttack(School activeSide, School passiveSide) {
+		if(schoolList.contains(activeSide) && schoolList.contains(passiveSide)){
+			System.out.println("主攻方" + activeSide.getName() + "以及被攻方" + passiveSide.getName() + "都已加入联盟，不允许内讧！");
+		}else if(schoolList.contains(activeSide) && !schoolList.contains(passiveSide)){
+			 System.out.println("主攻方" + activeSide.getName() + "已加入联盟，被攻方" + passiveSide.getName() + "不在联盟之中，将集体攻打该门派！");
+			 for(School school : schoolList){
+				 school.attack(passiveSide);
+			 }
+		}else if(!schoolList.contains(activeSide) && schoolList.contains(passiveSide)){
+			System.out.println("主攻方" + activeSide.getName() + "未加入联盟，被攻方" + passiveSide.getName() + "在联盟之中，将集体防御！");
+		    for(School school : schoolList){
+			     school.defense();
+		    }
+		}else{
+			System.out.println("主攻方" + activeSide.getName() + "未加入联盟，被攻房" + passiveSide.getName() + "未加入联門,联盟无权干预此事！");
+			activeSide.attack(passiveSide);
+		}
+	}
+
+	@Override
+	public void resolveDefense(School passiveSide) {
+		if(schoolList.contains(passiveSide)){
+			System.out.println("被攻方" + passiveSide.getName() + "在联盟之中，将集体防御！");
+		    for(School school : schoolList){
+			     school.defense();
+		    }
+		}else{
+			 System.out.println("被攻方" + passiveSide.getName() + "未加入联盟，联盟不给予防御帮助！");
+	         passiveSide.defense();
+		}
+	}
+
+}
+
+“这应该便是联盟的大致蓝图了，它可以负责各个门派之间的交往，去除掉门派之间直接的关联，并且这样做的话，还可以控制联盟中的门派。剩下的就是各个门派的布局需要稍微改变一下。”左阁主看着自己一手策划的联盟，轻声说道。
+
+“首先应该就是抽象父类需要变化一下了，因为现在每一个门派的动作都需要委托给联盟去做。”
+
+/**
+ * @author bjtang
+ * @date 2017年7月14日
+ * @desc 升级过后的门派抽象类
+ */
+public abstract class School {
+
+	protected IPatternAlliance patternAlliance;
+
+	public School(IPatternAlliance patternAlliance) {
+		super();
+		this.patternAlliance = patternAlliance;
+	}
+
+	public void defense() {
+		System.out.println(getName() + "防御");
+	}
+
+	public void attack(School school) {
+		System.out.println(getName() + "攻击" + school.getName());
+	}
+
+	// 有了中介者，将由中介者处理
+	public void attackByPatternAlliance(School school) {
+		patternAlliance.resolveAttack(this, school);
+	}
+
+	public void defenseByPatternAlliance() {
+		patternAlliance.resolveDefense(this);
+	}
+
+	public abstract String getName();
+}
+
+“这一下各个门派的布局只需要稍微变化一下就好，因为每一个门派都要认识这个中介者，也就是模式联盟。那么策略宫，这个众矢之的，也是要认识的了，只是联盟要不要收留这个家伙，那就另说了，嘿嘿！”左阁主阴笑着说道。
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   命令门
+ */
+public class CommandSchool extends School {
+
+	public CommandSchool(IPatternAlliance patternAlliance) {
+		super(patternAlliance);
+	}
+
+	@Override
+	public String getName() {
+		return "命令门";
+	}
+
+}
+
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   中介者神阁
+ */
+public class MediatorSchool extends School {
+
+	public MediatorSchool(IPatternAlliance patternAlliance) {
+		super(patternAlliance);
+	}
+
+	@Override
+	public String getName() {
+		return "中介者神阁";
+	}
+
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   单利宗
+ */
+public class SingletonSchool extends School {
+
+	public SingletonSchool(IPatternAlliance patternAlliance) {
+		super(patternAlliance);
+	}
+
+	@Override
+	public String getName() {
+		return "单利宗";
+	}
+}
+
+/**
+ * @author bjtang
+ * @date   2017年7月14日  
+ * @desc   策略宫
+ */
+public class StrategySchool extends School {
+
+	public StrategySchool(IPatternAlliance patternAlliance) {
+		super(patternAlliance);
+	}
+
+	@Override
+	public String getName() {
+		return "策略宫";
+	}
+
+}
+
+“这下大陆的格局就要变化一下了，本阁主就先来模拟一个吧。不过策略宫的下场好像不怎么好啊。嘿嘿。”阴笑一声，左阁主便开始在虚空中画起秘籍暗语。
+	
+/**
+ * @author bjtang
+ * @date 2017年7月14日
+ * @desc 大陆格局
+ */
+public class ContinentalPattern {
+
+	public static void main(String[] args) {
+
+		IPatternAlliance patternAlliance = new PatternAlliance();
+
+		School singletonSchool = new SingletonSchool(patternAlliance);
+		School commandSchool = new CommandSchool(patternAlliance);
+		School mediatorSchool = new MediatorSchool(patternAlliance);
+
+		School strategySchool = new StrategySchool(patternAlliance);
+
+		// 策略宫没有被联盟收留
+		patternAlliance.add(mediatorSchool);
+		patternAlliance.add(commandSchool);
+		patternAlliance.add(singletonSchool);
+
+		singletonSchool.attackByPatternAlliance(mediatorSchool);
+		commandSchool.attackByPatternAlliance(mediatorSchool);
+		System.out.println("------------------------------------------------------");
+		mediatorSchool.attackByPatternAlliance(strategySchool);
+		System.out.println("------------------------------------------------------");
+		strategySchool.attackByPatternAlliance(mediatorSchool);
+		mediatorSchool.defenseByPatternAlliance();
+		System.out.println("------------------------------------------------------");
+	}
+}
+
+“嘿嘿，如果有此格局，本阁主相信策略宫应该马上就要从大陆上消失了。”左阁主看着虚空中漂浮的文字结果，阴笑声更加猖狂了。
+
+   收起脸上的阴笑，左阁主忽然表情严肃的自言自语道：“想必这就是当初六道天人的预言了，看来模式联盟是必须要建立的了，这样可以避免各个门派之间的混乱场面，而且也可以集齐力量，一举消灭一些黑暗势力，实在是妙招。”
+
+“接下来本阁主就要总结一下自己对《中介者模式》的参悟了，想来这应该对本阁主功力的提升有很大好处。”说完，左阁主便开始在虚空之中勾画自己的参悟。
+
+<中介者模式>针对的问题是，解决一系列对象之间复杂的耦合关系，这一系列对象往往是“多对多”的耦合关系，<中介者模式>采用一个中介者对象将这一系列对象集中管理，而各个对象也将自己与其它对象的交互行为委托给中介者处理，从而减少
+这一系列对象之间的耦合。
+
+它的优点到是非常明显，清除了一系列对象之间复杂的耦合关系，并且中介者可以控制这一系列对象的行为，统一管理。
+
+“这算是《中介者模式》秘籍的优势，不过它有一个明显的缺点，如果抓住的话，则容易被破招，那就是模式联門一旦成立，就必须可以正常运行，否则模式联門一旦崩溃，那么下面的门派都要危险了，”左阁主暗暗说道。
+
+<中介者模式>的缺点是，由于中介者负责着一系列对象的交互与控制，所以中介者的类非常复杂，而且一旦中介者无法正常工作，那么所有将行为委托给中介者的类都将出现问题，所以在使用的时候还是要特别小心。
+
+“下面，本阁主就要看下现在大陆的格局地图了，”说完，左阁主便开始在虚空中勾画格局地图
+
+/pattern/src/main/java/com/tbj/pattern/mediator/20130702145108437.jpg
+
+“这下门派之间那些乱七八糟的关系全部都消失了，模式联盟关联着所有的门派，进而简化了各个门派之间的交往。看来本阁主得尽快联系抽象工厂宗门的宗主，他算是二十三门派中最有声望的一位修者，想必要是说服他的话，模式联盟的建立会顺利很多，至于策略宫的话，嘿嘿。”想到以后策略宫可能要面临二十二门派的讨伐，左阁主就不禁阴笑连连。
+
+  魔都某出租屋里。
+
+ 小左正呼呼的做着美梦，脸上挂着阴险的笑容，嘴里还不停的说着：“该死的策略宫。”
+
+ 忽然，小左猛的睁开双眼，慌忙的看了下手机，随即便立刻穿上衣服，向门外冲去，边跑着嘴中还不停的说道：“我擦，原来只是个梦，都十点半了，这下完蛋了，该死的策略宫。”
+
+
+
+      
+       

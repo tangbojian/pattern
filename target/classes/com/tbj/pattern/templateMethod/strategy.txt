@@ -1,0 +1,247 @@
+模板方法模式：
+定义：一般是为了统一子类的算法实现步骤，所使用的一种手段或者说是方式。它在父类中定义一系列算法的步骤，而将具体的实现都推迟到子类。
+最典型的形式就是一个接口，一个抽象父类，父类中会有一系列的抽象方法，而在子类中去一一实现这些方法。
+
+下面LZ给举一个例子，比如我们有一个接口，里面一个方法，是用来制造一个HTML页面；如下。
+
+public interface PageBuilder {
+
+	String buildHtml();
+	
+}
+
+这个接口很简单，就是直接制造一个Html页面的内容，假设我们不使用末班方法模式，直接让各个子类去直接实现这个接口，那么肯定实现的方式千奇百怪，而且步骤也乱七八糟的，这样实在不利于维护
+和扩展。所以我们可以使用模板方法模式，将这个过程制定好，然后把具体的内容填充交给子类就好，这样这些子类生成的HTML页面就会非常一致。
+
+基于这个目的，我们定义如下抽象类，去实现这个接口，并且我们定义好步骤。
+
+public abstract class AbstractPageBuilder implements PageBuilder{
+	
+	private StringBuffer stringBuffer = new StringBuffer();
+
+	@Override
+	public String buildHtml() {
+		//首先加入 doctype ，因为都是 html 页面，所以我们父类不需要推迟给子类实现，直接在父类实现
+		stringBuffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+		//页面下面就是成对的一个HTML标签，我们也在父类加入，不需要给子类实现
+		stringBuffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		//下面就应该是head标签里的内容了，这个我们父类做不了主了,推迟到子类实现，所以我们定义一个抽象方法，让子类必须实现
+		appendHead(stringBuffer);
+		//下面就应该是body标签内容,这个我们父类也做不了住，推迟到子类实现，所以我们定义一个抽象方法，让子类必须实现
+		appendBody(stringBuffer);
+		//html标签的关闭
+        stringBuffer.append("</html>");
+        return stringBuffer.toString();
+	}
+
+	//具体body内容的实现
+	protected abstract void appendBody(StringBuffer stringBuffer);
+
+	//具体Head的实现
+	protected abstract void appendHead(StringBuffer stringBuffer);
+
+}
+
+上面LZ已经加了注解，这下我们如果要制作一个html页面，就直接继承我们的抽象父类就可以了，而我们的子类只需要实现两个模板方法，就可以成功完成html页面的创建，下面LZ给出了一个子类，
+我们随意制造一个html页面。
+
+public class MyPageBuilder extends AbstractPageBuilder {
+
+	@Override
+	protected void appendBody(StringBuffer stringBuffer) {
+		stringBuffer.append("<head><title>你好</title></head>");
+	}
+
+	@Override
+	protected void appendHead(StringBuffer stringBuffer) {
+		stringBuffer.append("<body><h1>你好,世界！</h1></body>");
+	}
+	
+	public static void main(String[] args) {
+        PageBuilder pageBuilder = new MyPageBuilder();
+        System.out.println(pageBuilder.buildHtml());
+    }
+
+}
+
+我们简单的加入一个head和body标签，然后创建测试类运行一下，就会发现，我们按照父类给的标准模板，生成了一个 html 页面
+
+这样做的方式的好处是，父类可以规范子类的创建过程，便于我们维护，而且子类也更省事，因为像doctype包括html标签都是一样的，所以子类不在需要关心这些，当然上述LZ写的有点粗糙，其实我们
+可以定义的更加仔细一点，比如head标签里，第一个是 tittle，然后是 meta 等等，但作为例子，我们还是遵循简单的原则，主要还是想给各位传达模板方式的思想。
+
+模板方法模式是所有设计模式当中，LZ觉的最无侵入性的模式，因为它的好处实在太明显了。模板方法模式并不强制接口的实现类必须继承，所以不会对子类造成任何影响，而如果子类的实现可以配的上模板
+类的模板，那么就可以享受模板方法模式带来的好处。
+
+通常情况下，模板方法模式用于定义构建某个对象的步骤与顺序，或者定义一个算法的骨架。
+
+我们刚才的示例明显就是创建一个String对象的过程，在这里要声明一点，对于模板方法模式，父类提供的构建步骤和顺序或者算法骨架，通常是不希望甚至是不允许子类去覆盖的，所在在某些场景中。可以直接
+将父类中提供骨架的方法声明为 final 类型。
+
+模板方法模式还有一种使用方式，为了给子类足够的自由度，可以提供一些方法供子类覆盖，去实现 一些骨架中不是必须但却可以有自定义实现的步骤。
+
+比如上述的例子中，我们压力都知道，HTML 页面中有一些标签是可有可无的，比如 meta 标签， link 标签 ， script 标签等等，那么我们可以将刚才的例子细化一下，去看一下上面说的供子类
+覆盖的方法是上面，我们将刚才的抽象父类细化成如下形式。
+
+public abstract class AbstractPageBuilderDetail implements PageBuilder{
+	
+	private static final String DEFAULT_DOCTYPE = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+
+	private static final String DEFAULT_XMLNS = "http://www.w3.org/1999/xhtml";
+	
+	private StringBuffer stringBuffer = new StringBuffer();
+	
+	@Override
+	public String buildHtml() {
+		stringBuffer.append(DEFAULT_DOCTYPE);
+		stringBuffer.append("<html xmlns=\"" + DEFAULT_XMLNS + "\">");
+		stringBuffer.append("<head>");
+		appendTitle(stringBuffer);
+		appendMeta(stringBuffer);
+		appendLink(stringBuffer);
+		appendScript(stringBuffer);
+		stringBuffer.append("</head>");
+		appendBody(stringBuffer);
+		stringBuffer.append("</html>");
+		return stringBuffer.toString();
+	}
+
+	protected void appendScript(StringBuffer stringBuffer) {}
+
+	protected void appendLink(StringBuffer stringBuffer) {}
+
+	protected void appendMeta(StringBuffer stringBuffer) {}
+
+	protected abstract void appendTitle(StringBuffer stringBuffer);
+	
+	protected abstract void appendBody(StringBuffer stringBuffer);
+	
+}
+
+可以看到，我们将head标签的生成过程更加细化了，分成四个方法， tittle， meta，link， 和 script，但是这四个里面appendTittle是模板方法，子类必须实现，
+而其他三个则是普通的空方法。
+
+那么上述三个方法，就是留给子类覆盖的，当然子类可以选择不覆盖，那么生成的HTML就没有 mata ， link和script 这三种标签，如果想有的话，就可以覆盖其中任意一个，
+比如下面这样：
+
+public class MyPageBuilderDetail extends AbstractPageBuilderDetail {
+
+	@Override
+	protected void appendMeta(StringBuffer stringBuffer) {
+		stringBuffer.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");;
+	}
+
+	@Override
+	protected void appendTitle(StringBuffer stringBuffer) {
+		stringBuffer.append("<title>你好</title>");
+	}
+
+	@Override
+	protected void appendBody(StringBuffer stringBuffer) {
+		stringBuffer.append("<body>你好，世界！</body>");
+	}
+
+	public static void main(String[] args) {
+		PageBuilder pageBuilder = new MyPageBuilder();
+		System.out.println(pageBuilder.buildHtml());
+	}
+
+}
+
+我们覆盖了appendMeta 方法，所以我们就可以在head标签中生成一个 meta 标签，如果各位看过上章的适配器模式，其实这里和缺省适配器很像，目的都是一样的，因为如果把 appednMeta 写成
+抽象方法， 那么子类就必须实现，但是 meta 标签又不是必须的，所以子类就有可能吧 appendMeta， appendLink， appendScript 方法全空着了。
+
+所以为了不强制子类实现不必要的抽象方法，但又不剥夺子类自由选择的权利，我们在父类提供一个默认的空实现，来让子类自由选择是否要覆盖掉这些方法。
+
+说道模板方法模式，我们JDK当中有一个类与它还有一个不得不说的故事，那就是类加载器。
+JDK类加载器可以大致分为三类，分别是 启动类加载器， 扩展类加载器， 系统类加载器（应用程序加载器）。
+这三者分别加载的路径分别为如下：
+
+启动类加载器：JAVA_HOME/lib 目录下，以及被 -Xbootclasspath 参数设定的路径，不过启动类加载器加载的类是有限的，如果 JVM 不认识的话， 你放在这些目录下也没用。
+扩展类加载器：JAVA_HOME/lib/ext 目录下，以及被 java.ext.dirs 系统变量指定的路径.
+系统类加载器(应用程序类加载器): 用户自己的类路径（classpath），这个类加载器就是我们经常使用的系统类加载器，并且JDK中抽象类 ClassLoader 的默认父类加载器就是它.
+
+在这里为什么说类加载器和模板方法模式有关呢？ 是因为 ClassLoader类就使用了模板模式，去保证加载过程中的唯一性。LZ先给各位看下这个类中的模板模式的应用。
+
+这是父类定义的算法
+protected Class<?> loadClass(String name, boolean resolve)
+        throws ClassNotFoundException
+    {
+        synchronized (getClassLoadingLock(name)) {
+            // First, check if the class has already been loaded
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                long t0 = System.nanoTime();
+                try {
+                    if (parent != null) {
+                        c = parent.loadClass(name, false);
+                    } else {
+                        c = findBootstrapClassOrNull(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ClassNotFoundException thrown if class not found
+                    // from the non-null parent class loader
+                }
+
+                if (c == null) {
+                    // If still not found, then invoke findClass in order
+                    // to find the class.
+                    long t1 = System.nanoTime();
+                    c = findClass(name);
+
+                    // this is the defining class loader; record the stats
+                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                    sun.misc.PerfCounter.getFindClasses().increment();
+                }
+            }
+            if (resolve) {
+                resolveClass(c);
+            }
+            return c;
+        }
+    }
+
+LZ 截取了主要的部分，为了突出这三个方法。在上面LZ 加了简单的注解，相信经过刚才的介绍，各位应该能看出这是一个模板方法模式，只是他没有定义抽象方法，因为 findClass 这个方法，
+并不是必须实现的，所以JDK选择留给程序员们自己选择是否要覆盖。
+
+从代码上我们可以看出，在 ClassLoader 中定义的算法顺序是。
+1：首先看是否有已经加载好的类，
+2：如果父类加载器不为空，则首先从父类加载器加载
+3：如果父类加载器为空，则尝试从启动加载器加载。
+4：如果两者都失败，才尝试从findClass方法加载。
+
+这是JDK加载器的双亲委托机制，即先从父类加载器加载，知道继承体系的顶层，否则才会采用当前的类加载器，这样做的目的刚才已经说了，是为了JVM中类的一致性。
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

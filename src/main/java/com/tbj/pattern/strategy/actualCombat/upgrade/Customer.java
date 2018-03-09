@@ -18,6 +18,8 @@ public class Customer {
 	 */
 	private Double amount = 0D;
 	
+	private CalPrice calPrice = CalPriceFactory.getInstance().createCalPrice(this);
+	
 	/**
 	 * 用户每次买了东西之后，先计算用户到达哪一级别
 	 * @param price
@@ -32,7 +34,7 @@ public class Customer {
 	 * @return
 	 */
 	public double callLastAmount(){
-		return CalPriceFactory.createCalPrice(this).calPrice(amount);
+		return calPrice.calPrice(amount);
 	}
 	
 	public Double getTotalAmount() {
